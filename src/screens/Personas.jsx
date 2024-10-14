@@ -1,4 +1,4 @@
-import { Footer, Menu, Navbar, Title } from "../components"
+import { DTable, Footer, Menu, Navbar, Title } from "../components"
 
 export const Personas = () => {
     return (
@@ -55,7 +55,7 @@ export const Personas = () => {
                                     <h4 className="card-title">Personas registradas</h4>
                                 </div>
                                 <div className="card-body">
-                                    
+                                    <DTable />
                                 </div>
                             </div>
                         </div> 
