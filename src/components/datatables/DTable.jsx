@@ -1,8 +1,22 @@
 import DataTable from 'react-data-table-component';
+import PropTypes from 'prop-types';
 
 export const DTable = ({ cols, info }) => {
 
-    const columnas = [
+    const columnas = cols;
+
+    const data = info;
+
+    return (
+        <DataTable
+			columns={columnas}
+			data={data}
+		/>
+    )
+}
+
+DTable.defaultProps = {
+    cols: [
         {
             name: 'Identificador',
             selector: row=> row.matricula
@@ -27,9 +41,8 @@ export const DTable = ({ cols, info }) => {
             name: 'Correo',
             selector: row=> row.correo
         },
-    ];
-
-    const data = [
+    ],
+    info: [
         {
             id: 1,
             matricula: "ZAQ0001",
@@ -49,11 +62,4 @@ export const DTable = ({ cols, info }) => {
             correo: "pedropascal@mymail.com"
         },
     ]
-
-    return (
-        <DataTable
-			columns={columnas}
-			data={data}
-		/>
-    )
 }
