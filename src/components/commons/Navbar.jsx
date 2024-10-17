@@ -22,7 +22,7 @@ export const Navbar = () => {
                 </li>
                 <li className="nav-item">
                     <a className="nav-link" data-widget="fullscreen" href="#" role="button">
-                        <i class="fas fa-sign-out-alt"></i>
+                        <i className="fas fa-sign-out-alt"></i>
                     </a>
                 </li>
             </ul>

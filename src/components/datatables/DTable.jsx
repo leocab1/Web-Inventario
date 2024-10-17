@@ -1,21 +1,7 @@
 import DataTable from 'react-data-table-component';
 import PropTypes from 'prop-types';
 
-export const DTable = ({ cols, info }) => {
-
-    const columnas = cols;
-
-    const data = info;
-
-    return (
-        <DataTable
-			columns={columnas}
-			data={data}
-		/>
-    )
-}
-
-DTable.defaultProps = {
+const defaultValues = {
     cols: [
         {
             name: 'Identificador',
@@ -62,4 +48,19 @@ DTable.defaultProps = {
             correo: "pedropascal@mymail.com"
         },
     ]
+}
+
+export const DTable = ({ cols=defaultValues.cols, info=defaultValues.info }) => {
+
+    return (
+        <DataTable
+			columns={cols}
+			data={info}
+		/>
+    )
+}
+
+DTable.propTypes = {
+    cols: PropTypes.array,
+    info: PropTypes.array,
 }

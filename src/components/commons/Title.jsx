@@ -12,7 +12,7 @@ export const Title = ({ title, breadcrums }) => {
                             {
                                 breadcrums?.map((breadcrumb) => {
                                     return (
-                                        <li className="breadcrumb-item"><a href="#">{ breadcrumb }</a></li>
+                                        <li key={breadcrumb} className="breadcrumb-item"><a href="#">{ breadcrumb }</a></li>
                                     )
                                 })
                             }

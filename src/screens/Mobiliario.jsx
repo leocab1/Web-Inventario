@@ -1,12 +1,12 @@
-import { DTable, Footer, Menu, Navbar, Title } from "../components";
+import { DTable, Footer, Menu, Navbar, Title } from "../components"
 
-export const Personas = () => {
+export const Mobiliario = () => {
     return (
         <>
             <Navbar />
-            <Menu nombre="Stockys" usuario="Jaimito el Cartero" />
+            <Menu nombre="InventarioSys" usuario="Jaimito el Cartero" />
             <div className="content-wrapper">
-                <Title title="Personas" breadcrums={["Personas", "Menú"]} />
+                <Title title="Mobiliario" breadcrums={["Personas", "Menú"]} />
                 <section className="content">
 
                     <div className="row">

@@ -1,7 +1,8 @@
-import { Personas } from "./screens/Personas";
+import { MyRoutes } from "./routes/MyRoutes"
+
 const App = () => {
     return (
-        <Personas />
+        <MyRoutes />
     )
 }
 
