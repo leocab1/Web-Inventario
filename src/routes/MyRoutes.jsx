@@ -11,8 +11,9 @@ export const MyRoutes = () => {
             <Route path="mobiliario" element={ <Mobiliario /> } />
             <Route path="ubicaciones" element={ <Ubicaciones /> } />
             <Route path="usuarios" element={ <Usuarios /> } />
-            <Route path="menu" element={ <Menu /> } />
             <Route index path="/" element={ <Inicio /> } />
+            
+            <Route path="menu" element={ <Menu /> } />
         </Routes>
     </BrowserRouter>
   )

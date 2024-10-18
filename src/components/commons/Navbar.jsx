@@ -1,4 +1,4 @@
-
+import { Link } from 'react-router-dom';
 export const Navbar = () => {
     return (
         <nav className="main-header navbar navbar-expand navbar-white navbar-light">
@@ -7,10 +7,10 @@ export const Navbar = () => {
                     <a className="nav-link" data-widget="pushmenu" href="#" role="button"><i className="fas fa-bars"></i></a>
                 </li>
                 <li className="nav-item d-none d-sm-inline-block">
-                    <a href="../../index3.html" className="nav-link">Inicio</a>
+                    <Link to="/" className="nav-link">Inicio</Link>
                 </li>
                 <li className="nav-item d-none d-sm-inline-block">
-                    <a href="#" className="nav-link">Contactos</a>
+                    <Link to="/" className="nav-link">Contactos</Link>
                 </li>
             </ul>
 
@@ -21,9 +21,9 @@ export const Navbar = () => {
                     </a>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" data-widget="fullscreen" href="#" role="button">
+                    <Link className="nav-link" data-widget="fullscreen" href="/" role="button">
                         <i className="fas fa-sign-out-alt"></i>
-                    </a>
+                    </Link>
                 </li>
             </ul>
         </nav>
