@@ -1,45 +1,87 @@
-import { DTable, Footer, Menu, Navbar, Title } from "../components"
+import { DTable, Footer, Menu, Navbar, Title } from "../components";
+
+const columnas = [
+    {
+        name: 'Identificador',
+        selector: row=> row.matricula
+    },
+    {
+        name: 'Nombre',
+        selector: row=> row.nombre
+    },
+    {
+        name: 'Tipo',
+        selector: row=> row.tipo
+    },
+    {
+        name: 'Ubicación',
+        selector: row=> row.ubicacion
+    },
+];
+
+const data = [
+    {
+        id: 1,
+        matricula: "ZAQ0001",
+        nombre: "Mesa binaria",
+        tipo: "Mueble de oficina",
+        ubicacion: "Edificio D5 - 211",
+    },
+    {
+        id: 2,
+        matricula: "ZAQ0002",
+        nombre: "CPU - HP Elite C800",
+        tipo: "Equipo de computo",
+        ubicacion: "Edificio D5 - 211",
+    },
+]
 
 export const Mobiliario = () => {
     return (
         <>
             <Navbar />
-            <Menu nombre="InventarioSys" usuario="Jaimito el Cartero" />
+            <Menu nombre="Stocky's" usuario="Jaimito el Cartero" />
             <div className="content-wrapper">
-                <Title title="Mobiliario" breadcrums={["Personas", "Menú"]} />
+                <Title title="Mobiliario" breadcrums={["Inicio", "Mobiliario"]} />
                 <section className="content">
 
                     <div className="row">
                         <div className="col-4">
                             <div className="card card-primary">
                                 <div className="card-header">
-                                    <h4 className="card-title">Agregar persona</h4>
+                                    <h4 className="card-title">Agregar mobiliario/artículo</h4>
                                 </div>
                                 <div className="card-body">
                                     <form>
                                         <div className="form-group">
-                                            <label>Matricula/Identificador/No. de empleado</label>
+                                            <label>Matricula / Identificador / No. inventario</label>
                                             <input className="form-control" placeholder="NX02154" />
                                         </div>
                                         <div className="form-group">
-                                            <label>Nombre(s)</label>
-                                            <input className="form-control" placeholder="Alfredo" />
+                                            <label>Nombre del mobiliario / artículo</label>
+                                            <input className="form-control" placeholder="Mesa de madera" />
                                         </div>
                                         <div className="form-group">
-                                            <label>Apellido Paterno</label>
-                                            <input className="form-control" placeholder="Adame" />
+                                            <label>Tipo de mobiliario</label>
+                                            <select className="form-control">
+                                                <option>Seleccione</option>
+                                                <option>Muebles</option>
+                                                <option>Equipo de cómputo</option>
+                                                <option>Equipo de laboratorio</option>
+                                                <option>Artículo de laboratorio</option>
+                                                <option>Artículo general</option>
+                                                <option>Otro</option>
+                                            </select>
                                         </div>
                                         <div className="form-group">
-                                            <label>Apellido Materno</label>
-                                            <input className="form-control" placeholder="Buenrostro" />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Teléfono</label>
-                                            <input className="form-control" placeholder="111222333" />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Correo electrónico</label>
-                                            <input className="form-control" placeholder="yomero@correo.net" />
+                                            <label>Ubicación</label>
+                                            <select className="form-control">
+                                                <option>Seleccione</option>
+                                                <option>Edificio D5 - 211</option>
+                                                <option>Edificio K5 - 101</option>
+                                                <option>Edificio D6 - 205</option>
+                                                <option>Otro</option>
+                                            </select>
                                         </div>
                                     </form>
                                 </div>
@@ -55,7 +97,7 @@ export const Mobiliario = () => {
                                     <h4 className="card-title">Personas registradas</h4>
                                 </div>
                                 <div className="card-body">
-                                    <DTable />
+                                    <DTable cols={ columnas } info={ data } />
                                 </div>
                             </div>
                         </div> 
