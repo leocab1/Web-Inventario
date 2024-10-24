@@ -4,7 +4,7 @@ export const Informes = () => {
     return (
         <>
             <Navbar />
-            <Menu nombre="InventarioSys" usuario="Jaimito el Cartero" />
+            <Menu nombre="InveCastor" usuario="Castor uwu" />
             <div className="content-wrapper">
                 <Title title="Informes" breadcrums={["Personas", "Menú"]} />
                 <section className="content">
