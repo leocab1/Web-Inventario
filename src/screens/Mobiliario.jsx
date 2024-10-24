@@ -63,7 +63,7 @@ export const Mobiliario = () => {
     return (    
         <>
             <Navbar />
-            <Menu nombre="Stocky's" usuario="Jaimito el Cartero" />
+            <Menu nombre="InveCastor" usuario="Castorcito UWU" />
             <div className="content-wrapper">
                 <Title title="Mobiliario" breadcrums={["Inicio", "Mobiliario"]} />
                 <section className="content">

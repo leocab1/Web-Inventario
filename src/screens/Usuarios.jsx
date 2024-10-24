@@ -1,5 +1,6 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components"
 import React, { useState } from 'react';
+import QR from "../components/commons/QR";
 
 const columnas = [
     {
@@ -92,8 +93,31 @@ export const Usuarios = () => {
                                 </div>
                                 <div className="card-footer">
                                     <button className="btn btn-secondary">Cancelar</button>
-                                    <button className="btn btn-lg btn-primary float-right">Aceptar</button>
-                                </div>
+                                    
+                                    <button type="button" className="btn btn-success" onClick={handleOpenModal}>
+                                    Aceptar
+                                </button>
+
+                                {showModal && (
+                                    <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-hidden="true" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                                        <div className="modal-dialog modal-sm">
+                                            <div className="modal-content modal-filled bg-success">
+                                                <div className="modal-body p-4">
+                                                    <div className="text-center">
+                                                        <i className="ri-check-line h1"></i>
+                                                        <h4 className="mt-2">Usuario Agregado Correctamente!</h4>
+
+
+                                                        <button type="button" className="btn btn-light my-2" onClick={handleCloseModal}>
+                                                            Aceptar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}                              
+                         </div>
                             </div>
                         </div>
                         <div className="col-8">
@@ -102,7 +126,7 @@ export const Usuarios = () => {
                                     <h4 className="card-title">Personas registradas</h4>
                                 </div>
                                 <div className="card-body">
-                                    <DTable />
+                                <DTable cols={ columnas } info={ data } />
                                 </div>
                             </div>
                         </div> 
