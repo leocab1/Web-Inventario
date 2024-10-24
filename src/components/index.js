@@ -5,3 +5,5 @@ export * from './commons/Title';
 export * from './commons/Menu';
 export * from './datatables/DTable';
 export * from './echarts/PieChart';
+export * from './echarts/Barchart';
+export *  from './commons/QR';

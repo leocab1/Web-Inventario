@@ -5,7 +5,7 @@ export const Footer = () => {
             <div className="float-right d-none d-sm-block">
                 <b>Version</b> 1.0
             </div>
-            <strong>Copyright &copy; 2024 Stoky's Project </strong>
+            <strong>Copyright &copy; 2024 InveCastor  </strong>
         </footer>
     )
 }

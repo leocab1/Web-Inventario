@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import userImg from "../../../public/dist/img/user1-128x128.jpg";
-import stockLogo from "../../../public/dist/img/ready-stock.png";
+import userImg from "../../../public/dist/img/castoricillo.png";
+import stockLogo from "../../../public/dist/img/cajita.jpg";
 
 export const Menu = ({ nombre, usuario }) => {
     return (

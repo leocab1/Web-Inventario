@@ -1,6 +1,65 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components";
+import React, { useState } from 'react';
+
+
+const columnas = [
+    {
+        name: 'Identificador',
+        selector: row=> row.matricula
+    },
+    {
+        name: 'Nombre',
+        selector: row=> row.nombre
+    },
+    {
+        name: 'Tipo',
+        selector: row=> row.tipo
+    },
+    {
+        name: 'Ubicación',
+        selector: row=> row.ubicacion
+    },
+    {
+        name: 'Opciones',
+        selector: row => row.action,
+        cell: (props) => (
+            <button className="btn btn-info btn-sm">Editar</button>
+        ),
+        ignoreRowClick: true,
+        allowOverflow: true,
+        button: true
+    },
+];
+
+const data = [
+    {
+        id: 1,
+        matricula: "ZAQ0001",
+        nombre: "Mesa binaria",
+        tipo: "Mueble de oficina",
+        ubicacion: "Edificio D5 - 211",
+        action: "Editar",
+    },
+    {
+        id: 2,
+        matricula: "ZAQ0002",
+        nombre: "CPU - HP Elite C800",
+        tipo: "Equipo de computo",
+        ubicacion: "Edificio D5 - 211",
+        action: "Editar",
+    },
+]
 
 export const Personas = () => {
+    const [showModal, setShowModal] = useState(false);
+
+    const handleOpenModal = () => {
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
     return (
         <>
             <Navbar />
@@ -45,8 +104,31 @@ export const Personas = () => {
                                 </div>
                                 <div className="card-footer">
                                     <button className="btn btn-secondary">Cancelar</button>
-                                    <button className="btn btn-lg btn-primary float-right">Aceptar</button>
-                                </div>
+                                    <button type="button" className="btn btn-success" onClick={handleOpenModal}>
+                                    Aceptar
+                                </button>
+
+                                {showModal && (
+                                    <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-hidden="true" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                                        <div className="modal-dialog modal-sm">
+                                            <div className="modal-content modal-filled bg-success">
+                                                <div className="modal-body p-4">
+                                                    <div className="text-center">
+                                                        <i className="ri-check-line h1"></i>
+                                                        <h4 className="mt-2">Persona Agregada Correctamente!</h4>
+
+
+                                                        <button type="button" className="btn btn-light my-2" onClick={handleCloseModal}>
+                                                            Aceptar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>                             
+
                             </div>
                         </div>
                         <div className="col-8">
@@ -55,7 +137,7 @@ export const Personas = () => {
                                     <h4 className="card-title">Personas registradas</h4>
                                 </div>
                                 <div className="card-body">
-                                    <DTable />
+                                <DTable cols={ columnas } info={ data } />
                                 </div>
                             </div>
                         </div> 

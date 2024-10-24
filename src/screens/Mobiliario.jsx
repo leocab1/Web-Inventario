@@ -18,6 +18,16 @@ const columnas = [
         name: 'Ubicación',
         selector: row=> row.ubicacion
     },
+    {
+        name: 'Opciones',
+        selector: row => row.action,
+        cell: (props) => (
+            <button className="btn btn-info btn-sm">Editar</button>
+        ),
+        ignoreRowClick: true,
+        allowOverflow: true,
+        button: true
+    },
 ];
 
 const data = [
@@ -27,6 +37,7 @@ const data = [
         nombre: "Mesa binaria",
         tipo: "Mueble de oficina",
         ubicacion: "Edificio D5 - 211",
+        action: "Editar",
     },
     {
         id: 2,
@@ -34,6 +45,7 @@ const data = [
         nombre: "CPU - HP Elite C800",
         tipo: "Equipo de computo",
         ubicacion: "Edificio D5 - 211",
+        action: "Editar",
     },
 ]
 
@@ -72,6 +84,36 @@ export const Mobiliario = () => {
                                             <label>Nombre del mobiliario / artículo</label>
                                             <input className="form-control" placeholder="Mesa de madera" />
                                         </div>
+                                        <div className="form-group">
+                                            <label>Descripción</label>
+                                            <input className="form-control" placeholder="en el edificio de tic's K5" />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Tipo</label>
+                                            <input className="form-control" placeholder="en el edificio de tic's K5" />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Estado</label>
+                                            <select className="form-control">
+                                                <option>Seleccione</option>
+                                                <option>Nuevo</option>
+                                                <option>Usado</option>
+                                            </select>
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Fecha Registro</label>
+                                            <input type="date" className="" />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label>Activo</label>
+                                            <input className="form-control" placeholder="1" />
+                                        </div> 
+                                        <div className="form-group">
+                                            <label>Codigo</label>
+                                            <input className="form-control" placeholder="G-4574RXDS" />
+                                        </div>                                       
+
                                         <div className="form-group">
                                             <label>Tipo de mobiliario</label>
                                             <select className="form-control">

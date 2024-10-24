@@ -1,6 +1,53 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components"
+import React, { useState } from 'react';
+
+const columnas = [
+    {
+        name: 'Identificador',
+        selector: row => row.matricula
+    },
+    {
+        name: 'Ubicacion',
+        selector: row => row.nombre
+    },
+    {
+        name: 'Opciones',
+        selector: row => row.action,
+        cell: (props) => (
+            <button className="btn btn-info btn-sm">Editar</button>
+        ),
+        ignoreRowClick: true,
+        allowOverflow: true,
+        button: true
+    },
+];
+
+const data = [
+    {
+        id: 1,
+        matricula: "ZAQ0001",
+        nombre: "Administracion",
+        action: "Editar",
+    },
+    {
+        id: 2,
+        matricula: "ZAQ0002",
+        nombre: "Recepcion",
+        action: "Editar",
+    },
+];
+
 
 export const Usuarios = () => {
+    const [showModal, setShowModal] = useState(false);
+
+    const handleOpenModal = () => {
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
     return (
         <>
             <Navbar />

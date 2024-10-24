@@ -4,7 +4,7 @@ export const Inicio = () => {
     return (
         <>
             <Navbar />
-            <Menu nombre="Stocky's" usuario="Jaimito el Cartero" />
+            <Menu nombre="InveCastor" usuario="Castorcito uwu" />
             <div className="content-wrapper">
                 <Title title="Bienvenido(s)" breadcrums={["Menú principal"]} />
                 <section className="content">
