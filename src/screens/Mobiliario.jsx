@@ -1,4 +1,5 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components";
+import React, { useState } from 'react';
 
 const columnas = [
     {
@@ -37,7 +38,17 @@ const data = [
 ]
 
 export const Mobiliario = () => {
-    return (
+    const [showModal, setShowModal] = useState(false);
+
+    const handleOpenModal = () => {
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+
+    return (    
         <>
             <Navbar />
             <Menu nombre="Stocky's" usuario="Jaimito el Cartero" />
@@ -87,9 +98,32 @@ export const Mobiliario = () => {
                                 </div>
                                 <div className="card-footer">
                                     <button className="btn btn-secondary">Cancelar</button>
-                                    <button className="btn btn-lg btn-primary float-right">Aceptar</button>
-                                </div>
+                                    <button type="button" className="btn btn-success" onClick={handleOpenModal}>
+                                    Aceptar
+                                </button>
+
+                                {showModal && (
+                                    <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-hidden="true" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                                        <div className="modal-dialog modal-sm">
+                                            <div className="modal-content modal-filled bg-success">
+                                                <div className="modal-body p-4">
+                                                    <div className="text-center">
+                                                        <i className="ri-check-line h1"></i>
+                                                        <h4 className="mt-2">Mobiliario Agregado Correctamente!</h4>
+
+
+                                                        <button type="button" className="btn btn-light my-2" onClick={handleCloseModal}>
+                                                            Aceptar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
+                            
+                                </div>
                         </div>
                         <div className="col-8">
                             <div className="card card-primary">
