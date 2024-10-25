@@ -1,6 +1,6 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components";
 import React, { useState } from 'react';
-
+import QR from "../components/commons/QR"; // Asegúrate de que el componente QR esté correctamente importado
 
 const columnas = [
     {

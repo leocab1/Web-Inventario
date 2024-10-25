@@ -1,6 +1,6 @@
-import { DTable, Footer, Menu, Navbar, PieChart, Title, BarChart} from "../components"; // Asegúrate de incluir QRCodeComponent
+import { DTable, Footer, Menu, Navbar, PieChart, Title, BarChart } from "../components";
 import React, { useState } from 'react';
-import QR from "../components/commons/QR";
+import QR from "../components/commons/QR"; // Asegúrate de que el componente QR esté correctamente importado
 
 const columnas = [
     {
@@ -73,7 +73,7 @@ export const Informes = () => {
 
     const handleCloseModal = () => {
         setShowModal(false);
-        setFormData({ empleado: '', ubicacion: '', tipoArticulo: '', fecha: '' }); // Resetear el formulario
+        setFormData({ empleado: '', ubicacion: '', tipoArticulo: '', fecha: '' });
     };
 
     const handleInputChange = (e) => {
@@ -86,7 +86,7 @@ export const Informes = () => {
     return (
         <>
             <Navbar />
-            <Menu nombre="InventarioSys" usuario="Jaimito el Cartero" />
+            <Menu nombre="InveCastor" usuario="Castorcitos uwu" />
             <div className="content-wrapper">
                 <Title title="Informes" breadcrums={["Personas", "Menú"]} />
                 <section className="content">
@@ -102,7 +102,7 @@ export const Informes = () => {
                                             <label>Empleado</label>
                                             <select name="empleado" className="form-control" onChange={handleInputChange}>
                                                 <option value="">-Seleccione-</option>
-                                                <option value="Juan perez">Juan Perez</option>
+                                                <option value="Juan Perez">Juan Perez</option>
                                                 <option value="Laura Sanchez">Laura Sanchez</option>
                                             </select>
                                         </div>
@@ -133,7 +133,7 @@ export const Informes = () => {
                                     </form>
                                 </div>
                                 <div className="card-footer">
-                                    <button className="btn btn-secondary">Cancelar</button>
+                                    <button className="btn btn-secondary" onClick={handleCloseModal}>Cancelar</button>
                                     <button type="button" className="btn btn-success" onClick={handleOpenModal}>
                                         Aceptar
                                     </button>

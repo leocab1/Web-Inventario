@@ -7,8 +7,16 @@ const columnas = [
         selector: row => row.matricula
     },
     {
-        name: 'Ubicacion',
-        selector: row => row.nombre
+        name: 'Edificio',
+        selector: row => row.edificio
+    },
+    {
+        name: 'Departamento',
+        selector: row => row.edificio
+    },
+    {
+        name: 'Area',
+        selector: row => row.area
     },
     {
         name: 'Opciones',
@@ -26,13 +34,17 @@ const data = [
     {
         id: 1,
         matricula: "ZAQ0001",
-        nombre: "Administracion",
+        edificio: "K5",
+        departamento: "Tecnologias de la Informacion",
+        area: "Laboratorio 211",
         action: "Editar",
     },
     {
         id: 2,
         matricula: "ZAQ0002",
-        nombre: "Recepcion",
+        edificio: "k4",
+        departamento: "edificio x",
+        area: "Laboratorio uwu",
         action: "Editar",
     },
 ];
@@ -64,8 +76,16 @@ export const Ubicaciones = () => {
                                 <div className="card-body">
                                     <form>
                                         <div className="form-group">
-                                            <label>Nombre(s)</label>
+                                            <label>Edificio(s)</label>
                                             <input className="form-control" placeholder="D-5" />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Departamento</label>
+                                            <input className="form-control" placeholder="D-5" />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Area</label>
+                                            <input className="form-control" placeholder="tics" />
                                         </div>
                                     </form>
                                 </div>

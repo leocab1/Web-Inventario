@@ -11,8 +11,28 @@ const columnas = [
         selector: row=> row.nombre
     },
     {
+        name: 'Descripcion',
+        selector: row=> row.descripcion
+    },
+    {
         name: 'Tipo',
         selector: row=> row.tipo
+    },
+    {
+        name: 'estado',
+        selector: row=> row.estado
+    },
+    {
+        name: 'Fecha Registro',
+        selector: row=> row.Fecha
+    },
+    {
+        name: 'Activo',
+        selector: row=> row.activo
+    },
+    {
+        name: 'Codigo',
+        selector: row=> row.codigo
     },
     {
         name: 'Ubicación',
@@ -35,7 +55,12 @@ const data = [
         id: 1,
         matricula: "ZAQ0001",
         nombre: "Mesa binaria",
+        descripcion: "Mesa de trabajo con dos puestos",
         tipo: "Mueble de oficina",
+        estado: "Nuevo",
+        Fecha: "2020-01-01",
+        activo: "Usando",
+        codigo: "MESA-01",
         ubicacion: "Edificio D5 - 211",
         action: "Editar",
     },
@@ -43,7 +68,12 @@ const data = [
         id: 2,
         matricula: "ZAQ0002",
         nombre: "CPU - HP Elite C800",
+        descripcion: "Procesador de la computadora",
         tipo: "Equipo de computo",
+        estado: "usado",
+        Fecha: "2022-05-15",
+        activo: "usando",
+        codigo: "CPU-HP",
         ubicacion: "Edificio D5 - 211",
         action: "Editar",
     },

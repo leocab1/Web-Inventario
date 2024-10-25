@@ -1,6 +1,5 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components"
 import React, { useState } from 'react';
-import QR from "../components/commons/QR";
 
 const columnas = [
     {
@@ -8,8 +7,24 @@ const columnas = [
         selector: row => row.matricula
     },
     {
-        name: 'Ubicacion',
+        name: 'Nombre',
         selector: row => row.nombre
+    },
+    {
+        name: 'Apellido Paterno',
+        selector: row => row.paterno
+    },
+    {
+        name: 'Apellido Materno',
+        selector: row => row.materno
+    },
+    {
+        name: 'Telefono',
+        selector: row => row.telefono
+    },
+    {
+        name: 'Correo Electronico',
+        selector: row => row.electronico
     },
     {
         name: 'Opciones',
@@ -27,13 +42,21 @@ const data = [
     {
         id: 1,
         matricula: "ZAQ0001",
-        nombre: "Administracion",
+        nombre: "Leonardo",
+        paterno: "Cano",
+        materno: "Garcia",
+        telefono: "1234567890",
+        electronico: "leonardo.cano@gmail.com",
         action: "Editar",
     },
     {
         id: 2,
         matricula: "ZAQ0002",
-        nombre: "Recepcion",
+        nombre: "Carlos",
+        paterno: "Garcia",
+        materno: "Cano",
+        telefono: "2215754515",
+        electronico: "carlos.garcia@gmail.com",
         action: "Editar",
     },
 ];
@@ -52,7 +75,7 @@ export const Usuarios = () => {
     return (
         <>
             <Navbar />
-            <Menu nombre="InCastor" usuario="Jaimito el Cartero" />
+            <Menu nombre="InveCastor" usuario="Castorcitos uwu" />
             <div className="content-wrapper">
                 <Title title="Usuarios" breadcrums={["Personas", "Menú"]} />
                 <section className="content">
