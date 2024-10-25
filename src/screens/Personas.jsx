@@ -1,24 +1,16 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components";
 import React, { useState } from 'react';
-import QR from "../components/commons/QR"; // Asegúrate de que el componente QR esté correctamente importado
+import QR from "../components/commons/QR"; 
 
 const columnas = [
-    {
-        name: 'Identificador',
-        selector: row=> row.matricula
+    { name: 'Identificador', 
+    selector: row => row.matricula 
     },
-    {
-        name: 'Nombre',
-        selector: row=> row.nombre
-    },
-    {
-        name: 'Tipo',
-        selector: row=> row.tipo
-    },
-    {
-        name: 'Ubicación',
-        selector: row=> row.ubicacion
-    },
+    { name: 'Nombre', 
+    selector: row => row.nombre },
+    { name: 'Tipo', 
+    selector: row => row.tipo },
+    { name: 'Ubicación', selector: row => row.ubicacion },
     {
         name: 'Opciones',
         selector: row => row.action,
@@ -48,10 +40,11 @@ const data = [
         ubicacion: "Edificio D5 - 211",
         action: "Editar",
     },
-]
+];
 
 export const Personas = () => {
     const [showModal, setShowModal] = useState(false);
+    const [qrData, setQrData] = useState('Información de prueba para QR');
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -60,6 +53,7 @@ export const Personas = () => {
     const handleCloseModal = () => {
         setShowModal(false);
     };
+
     return (
         <>
             <Navbar />
@@ -67,7 +61,6 @@ export const Personas = () => {
             <div className="content-wrapper">
                 <Title title="Personas" breadcrums={["Personas", "Menú"]} />
                 <section className="content">
-
                     <div className="row">
                         <div className="col-4">
                             <div className="card card-primary">
@@ -105,31 +98,33 @@ export const Personas = () => {
                                 <div className="card-footer">
                                     <button className="btn btn-secondary">Cancelar</button>
                                     <button type="button" className="btn btn-success" onClick={handleOpenModal}>
-                                    Aceptar
-                                </button>
+                                        Aceptar
+                                    </button>
 
-                                {showModal && (
-                                    <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-hidden="true" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                                        <div className="modal-dialog modal-sm">
-                                            <div className="modal-content modal-filled bg-success">
-                                                <div className="modal-body p-4">
-                                                    <div className="text-center">
-                                                        <i className="ri-check-line h1"></i>
-                                                        <h4 className="mt-2">Persona Agregada Correctamente!</h4>
-
-
-                                                        <button type="button" className="btn btn-light my-2" onClick={handleCloseModal}>
-                                                            Aceptar
-                                                        </button>
+                                    {showModal && (
+                                        <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-hidden="true" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                                            <div className="modal-dialog modal-sm">
+                                                <div className="modal-content modal-filled bg-success">
+                                                    <div className="modal-body p-4">
+                                                        <div className="text-center">
+                                                            <i className="ri-check-line h1"></i>
+                                                            <h4 className="mt-2">Persona Agregada Correctamente!</h4>
+                                                        </div>
+                                                        <div className="text-center">
+                                                            <QR value={qrData} />
+                                                        </div>
+                                                        <div className="text-center">
+                                                            <button type="button" className="btn btn-light my-2" onClick={handleCloseModal}>
+                                                                Aceptar
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
+                                </div>
                             </div>                             
-
-                            </div>
                         </div>
                         <div className="col-8">
                             <div className="card card-primary">
@@ -137,15 +132,14 @@ export const Personas = () => {
                                     <h4 className="card-title">Personas registradas</h4>
                                 </div>
                                 <div className="card-body">
-                                <DTable cols={ columnas } info={ data } />
+                                    <DTable cols={columnas} info={data} />
                                 </div>
                             </div>
                         </div> 
                     </div>
-
                 </section>
             </div>
             <Footer />
         </>
-    )
-}
+    );
+};

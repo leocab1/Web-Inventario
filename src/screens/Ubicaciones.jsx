@@ -1,23 +1,12 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components";
 import React, { useState } from 'react';
+import QR from "../components/commons/QR"; 
 
 const columnas = [
-    {
-        name: 'Identificador',
-        selector: row => row.matricula
-    },
-    {
-        name: 'Edificio',
-        selector: row => row.edificio
-    },
-    {
-        name: 'Departamento',
-        selector: row => row.edificio
-    },
-    {
-        name: 'Area',
-        selector: row => row.area
-    },
+    { name: 'Identificador', selector: row => row.matricula },
+    { name: 'Edificio', selector: row => row.edificio },
+    { name: 'Departamento', selector: row => row.departamento },
+    { name: 'Área', selector: row => row.area },
     {
         name: 'Opciones',
         selector: row => row.action,
@@ -42,15 +31,16 @@ const data = [
     {
         id: 2,
         matricula: "ZAQ0002",
-        edificio: "k4",
-        departamento: "edificio x",
-        area: "Laboratorio uwu",
+        edificio: "K4",
+        departamento: "Edificio X",
+        area: "Laboratorio UWU",
         action: "Editar",
     },
 ];
 
 export const Ubicaciones = () => {
     const [showModal, setShowModal] = useState(false);
+    const [qrData, setQrData] = useState('');
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -71,7 +61,7 @@ export const Ubicaciones = () => {
                         <div className="col-4">
                             <div className="card card-primary">
                                 <div className="card-header">
-                                    <h4 className="card-title">Agregar Ubicacion</h4>
+                                    <h4 className="card-title">Agregar Ubicación</h4>
                                 </div>
                                 <div className="card-body">
                                     <form>
@@ -84,8 +74,8 @@ export const Ubicaciones = () => {
                                             <input className="form-control" placeholder="D-5" />
                                         </div>
                                         <div className="form-group">
-                                            <label>Area</label>
-                                            <input className="form-control" placeholder="tics" />
+                                            <label>Área</label>
+                                            <input className="form-control" placeholder="TICS" />
                                         </div>
                                     </form>
                                 </div>
@@ -100,9 +90,12 @@ export const Ubicaciones = () => {
                                                 <div className="modal-body p-4">
                                                     <div className="text-center">
                                                         <i className="ri-check-line h1"></i>
-                                                        <h4 className="mt-2">Informe Agregado Correctamente!</h4>
-
-
+                                                        <h4 className="mt-2">Ubicacion Agregada Correctamente!</h4>
+                                                    </div>
+                                                    <div className="text-center">
+                                                        <QR value={qrData} />
+                                                    </div>
+                                                    <div className="text-center">
                                                         <button type="button" className="btn btn-light my-2" onClick={handleCloseModal}>
                                                             Aceptar
                                                         </button>

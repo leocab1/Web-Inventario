@@ -1,43 +1,29 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components";
 import React, { useState } from 'react';
+import QR from "../components/commons/QR";
 
 const columnas = [
-    {
-        name: 'Identificador',
-        selector: row=> row.matricula
+    { name: 'Identificador',
+     selector: row => row.matricula },
+    { name: 'Nombre', 
+    selector: row => row.nombre 
     },
-    {
-        name: 'Nombre',
-        selector: row=> row.nombre
+    { name: 'Descripcion', 
+    selector: row => row.descripcion 
     },
-    {
-        name: 'Descripcion',
-        selector: row=> row.descripcion
-    },
-    {
-        name: 'Tipo',
-        selector: row=> row.tipo
-    },
-    {
-        name: 'estado',
-        selector: row=> row.estado
-    },
-    {
-        name: 'Fecha Registro',
-        selector: row=> row.Fecha
-    },
-    {
-        name: 'Activo',
-        selector: row=> row.activo
-    },
-    {
-        name: 'Codigo',
-        selector: row=> row.codigo
-    },
-    {
-        name: 'Ubicación',
-        selector: row=> row.ubicacion
-    },
+    { name: 'Tipo', 
+    selector: row => row.tipo },
+    { name: 'Estado', 
+    selector: row => row.estado
+     },
+    { name: 'Fecha Registro', 
+    selector: row => row.Fecha },
+    { name: 'Activo', 
+    selector: row => row.activo },
+    { name: 'Codigo', 
+    selector: row => row.codigo },
+    { name: 'Ubicación', 
+    selector: row => row.ubicacion },
     {
         name: 'Opciones',
         selector: row => row.action,
@@ -70,17 +56,18 @@ const data = [
         nombre: "CPU - HP Elite C800",
         descripcion: "Procesador de la computadora",
         tipo: "Equipo de computo",
-        estado: "usado",
+        estado: "Usado",
         Fecha: "2022-05-15",
-        activo: "usando",
+        activo: "Usando",
         codigo: "CPU-HP",
         ubicacion: "Edificio D5 - 211",
         action: "Editar",
     },
-]
+];
 
 export const Mobiliario = () => {
     const [showModal, setShowModal] = useState(false);
+    const [qrData, setQrData] = useState('Información de prueba para QR');
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -132,7 +119,7 @@ export const Mobiliario = () => {
                                         </div>
                                         <div className="form-group">
                                             <label>Fecha Registro</label>
-                                            <input type="date" className="" />
+                                            <input type="date" className="form-control" />
                                         </div>
 
                                         <div className="form-group">
@@ -169,33 +156,34 @@ export const Mobiliario = () => {
                                     </form>
                                 </div>
                                 <div className="card-footer">
-                                    <button className="btn btn-secondary">Cancelar</button>
+                                    <button className="btn btn-secondary" onClick={handleCloseModal}>Cancelar</button>
                                     <button type="button" className="btn btn-success" onClick={handleOpenModal}>
-                                    Aceptar
-                                </button>
+                                        Aceptar
+                                    </button>
 
-                                {showModal && (
-                                    <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-hidden="true" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                                        <div className="modal-dialog modal-sm">
-                                            <div className="modal-content modal-filled bg-success">
-                                                <div className="modal-body p-4">
-                                                    <div className="text-center">
-                                                        <i className="ri-check-line h1"></i>
-                                                        <h4 className="mt-2">Mobiliario Agregado Correctamente!</h4>
-
-
-                                                        <button type="button" className="btn btn-light my-2" onClick={handleCloseModal}>
-                                                            Aceptar
-                                                        </button>
+                                    {showModal && (
+                                        <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-hidden="true" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                                            <div className="modal-dialog modal-sm">
+                                                <div className="modal-content modal-filled bg-success">
+                                                    <div className="modal-body p-4">
+                                                        <div className="text-center">
+                                                            <h4 className="mt-2">Mobiliario Agregado Correctamente!</h4>
+                                                        </div>
+                                                        <div className="text-center">
+                                                            <QR value={qrData} />
+                                                        </div>
+                                                        <div className="text-center">
+                                                            <button type="button" className="btn btn-light my-2" onClick={handleCloseModal}>
+                                                                Aceptar
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )}
-                            </div>
-                            
+                                    )}
                                 </div>
+                            </div>
                         </div>
                         <div className="col-8">
                             <div className="card card-primary">
@@ -203,7 +191,7 @@ export const Mobiliario = () => {
                                     <h4 className="card-title">Personas registradas</h4>
                                 </div>
                                 <div className="card-body">
-                                    <DTable cols={ columnas } info={ data } />
+                                    <DTable cols={columnas} info={data} />
                                 </div>
                             </div>
                         </div> 
@@ -213,5 +201,5 @@ export const Mobiliario = () => {
             </div>
             <Footer />
         </>
-    )
-}
+    );
+};

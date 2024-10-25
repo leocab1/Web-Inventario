@@ -1,6 +1,6 @@
 import { DTable, Footer, Menu, Navbar, PieChart, Title, BarChart } from "../components";
 import React, { useState } from 'react';
-import QR from "../components/commons/QR"; // Asegúrate de que el componente QR esté correctamente importado
+import QR from "../components/commons/QR";
 
 const columnas = [
     {
@@ -145,11 +145,15 @@ export const Informes = () => {
                                                     <div className="modal-body p-4">
                                                         <div className="text-center">
                                                             <h4 className="mt-2">Informe Agregado Correctamente!</h4>
-                                                            <QR value={qrData} />
+                                                        </div>
+                                                        <div className="text-center">
+                                                        <QR value={qrData} />
+                                                            </div>
+                                                            <div className="text-center">
                                                             <button type="button" className="btn btn-light my-2" onClick={handleCloseModal}>
                                                                 Aceptar
                                                             </button>
-                                                        </div>
+                                                            </div>
                                                     </div>
                                                 </div>
                                             </div>

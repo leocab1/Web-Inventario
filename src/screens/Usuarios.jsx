@@ -1,5 +1,6 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components"
 import React, { useState } from 'react';
+import QR from "../components/commons/QR"; 
 
 const columnas = [
     {
@@ -64,6 +65,7 @@ const data = [
 
 export const Usuarios = () => {
     const [showModal, setShowModal] = useState(false);
+    const [qrData, setQrData] = useState('Información de prueba para QR');
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -129,8 +131,9 @@ export const Usuarios = () => {
                                                     <div className="text-center">
                                                         <i className="ri-check-line h1"></i>
                                                         <h4 className="mt-2">Usuario Agregado Correctamente!</h4>
-
-
+                                                        <div className="text-center">
+                                                        <QR value={qrData} />
+                                                    </div>
                                                         <button type="button" className="btn btn-light my-2" onClick={handleCloseModal}>
                                                             Aceptar
                                                         </button>
