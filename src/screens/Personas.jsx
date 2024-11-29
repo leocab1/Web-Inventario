@@ -1,15 +1,12 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import QR from "../components/commons/QR"; 
+import { useFetchv2 } from "../hooks/useFetchv2"; // Asegúrate de tener este hook implementado
 
 const columnas = [
-    { name: 'Identificador', 
-    selector: row => row.matricula 
-    },
-    { name: 'Nombre', 
-    selector: row => row.nombre },
-    { name: 'Tipo', 
-    selector: row => row.tipo },
+    { name: 'Identificador', selector: row => row.matricula },
+    { name: 'Nombre', selector: row => row.nombre },
+    { name: 'Tipo', selector: row => row.tipo },
     { name: 'Ubicación', selector: row => row.ubicacion },
     {
         name: 'Opciones',
@@ -23,28 +20,40 @@ const columnas = [
     },
 ];
 
-const data = [
-    {
-        id: 1,
-        matricula: "ZAQ0001",
-        nombre: "Mesa binaria",
-        tipo: "Mueble de oficina",
-        ubicacion: "Edificio D5 - 211",
-        action: "Editar",
-    },
-    {
-        id: 2,
-        matricula: "ZAQ0002",
-        nombre: "CPU - HP Elite C800",
-        tipo: "Equipo de computo",
-        ubicacion: "Edificio D5 - 211",
-        action: "Editar",
-    },
-];
-
 export const Personas = () => {
     const [showModal, setShowModal] = useState(false);
+    const { getData, setData, updateData, deleteData } = useFetchv2();
+    const [Personas, setPersonas] = useState([]);
+    const [formData, setFormData] = useState({
+        matricula: "",
+        nombre: "",
+        apellidoPaterno: "",
+        apellidoMaterno: "",
+        telefono: "",
+        correo: "",
+    });
     const [qrData, setQrData] = useState('Información de prueba para QR');
+
+    useEffect(() => {
+        // Si estás obteniendo datos de un API, debes hacer algo como esto:
+        // getData('endpoint-aqui').then(response => setPersonas(response));
+    }, []);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
+
+   
+    const handleSubmit = async (e) => {  
+        e.preventDefault();
+        setQrData(JSON.stringify(formData)); 
+        await handleOpenModal(); 
+    };
+    
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -52,6 +61,14 @@ export const Personas = () => {
 
     const handleCloseModal = () => {
         setShowModal(false);
+        setFormData({
+            matricula: "",
+            nombre: "",
+            apellidoPaterno: "",
+            apellidoMaterno: "",
+            telefono: "",
+            correo: "",
+        });
     };
 
     return (
@@ -61,6 +78,7 @@ export const Personas = () => {
             <div className="content-wrapper">
                 <Title title="Personas" breadcrums={["Personas", "Menú"]} />
                 <section className="content">
+
                     <div className="row">
                         <div className="col-4">
                             <div className="card card-primary">
@@ -68,38 +86,73 @@ export const Personas = () => {
                                     <h4 className="card-title">Agregar persona</h4>
                                 </div>
                                 <div className="card-body">
-                                    <form>
+                                    <form onSubmit={handleSubmit}>
                                         <div className="form-group">
                                             <label>Matricula/Identificador/No. de empleado</label>
-                                            <input className="form-control" placeholder="NX02154" />
+                                            <input
+                                                name="matricula"
+                                                className="form-control"
+                                                placeholder="NX02154"
+                                                value={formData.matricula}
+                                                onChange={handleChange}
+                                            />
                                         </div>
                                         <div className="form-group">
                                             <label>Nombre(s)</label>
-                                            <input className="form-control" placeholder="Alfredo" />
+                                            <input
+                                                name="nombre"
+                                                className="form-control"
+                                                placeholder="Alfredo"
+                                                value={formData.nombre}
+                                                onChange={handleChange}
+                                            />
                                         </div>
                                         <div className="form-group">
                                             <label>Apellido Paterno</label>
-                                            <input className="form-control" placeholder="Adame" />
+                                            <input
+                                                name="apellidoPaterno"
+                                                className="form-control"
+                                                placeholder="Adame"
+                                                value={formData.apellidoPaterno}
+                                                onChange={handleChange}
+                                            />
                                         </div>
                                         <div className="form-group">
                                             <label>Apellido Materno</label>
-                                            <input className="form-control" placeholder="Buenrostro" />
+                                            <input
+                                                name="apellidoMaterno"
+                                                className="form-control"
+                                                placeholder="Buenrostro"
+                                                value={formData.apellidoMaterno}
+                                                onChange={handleChange}
+                                            />
                                         </div>
                                         <div className="form-group">
                                             <label>Teléfono</label>
-                                            <input className="form-control" placeholder="111222333" />
+                                            <input
+                                                name="telefono"
+                                                className="form-control"
+                                                placeholder="111222333"
+                                                value={formData.telefono}
+                                                onChange={handleChange}
+                                            />
                                         </div>
                                         <div className="form-group">
                                             <label>Correo electrónico</label>
-                                            <input className="form-control" placeholder="yomero@correo.net" />
+                                            <input
+                                                name="correo"
+                                                className="form-control"
+                                                placeholder="yomero@correo.net"
+                                                value={formData.correo}
+                                                onChange={handleChange}
+                                            />
                                         </div>
+                                        <div className="modal-footer justify-content-between">
+               <button type="button"  className="btn btn-default" onClick={handleCloseModal}>Cancelar</button> 
+                 <button   type="submit"className="btn btn-primary">  Aceptar</button>
+</div>
+
                                     </form>
-                                </div>
-                                <div className="card-footer">
-                                    <button className="btn btn-secondary">Cancelar</button>
-                                    <button type="button" className="btn btn-success" onClick={handleOpenModal}>
-                                        Aceptar
-                                    </button>
 
                                     {showModal && (
                                         <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-hidden="true" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
@@ -126,16 +179,17 @@ export const Personas = () => {
                                 </div>
                             </div>                             
                         </div>
+
                         <div className="col-8">
                             <div className="card card-primary">
                                 <div className="card-header">
                                     <h4 className="card-title">Personas registradas</h4>
                                 </div>
                                 <div className="card-body">
-                                    <DTable cols={columnas} info={data} />
+                                    <DTable cols={columnas} info={Personas} /> {/* Usa el estado Personas aquí */}
                                 </div>
                             </div>
-                        </div> 
+                        </div>
                     </div>
                 </section>
             </div>

@@ -1,9 +1,8 @@
 export const useFetchv2 = () => {
-
-    //Metodo Get
+    // Método GET
     const getData = async (url) => {
         const request = fetch(url, {
-            method: "get",
+            method: "GET",
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -12,7 +11,7 @@ export const useFetchv2 = () => {
         if (!request.ok)
             return {
                 error: true,
-                message: "Ocurrio un error"
+                message: "Ocurrió un error"
             }
         else
             return {
@@ -22,10 +21,10 @@ export const useFetchv2 = () => {
             }
     }
 
-    //Metodo Post
+    // Método POST
     const setData = async (url, data) => {
         const request = fetch(url, {
-            method: "post",
+            method: "POST",
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -35,7 +34,7 @@ export const useFetchv2 = () => {
         if (!request.ok)
             return {
                 error: true,
-                message: "Ocurrio un error"
+                message: "Ocurrió un error"
             }
         else
             return {
@@ -45,10 +44,10 @@ export const useFetchv2 = () => {
             }
     }
 
-    //Metodo Put
+    // Método PUT
     const updateData = async (url, data) => {
         const request = fetch(url, {
-            method: "update",
+            method: "PUT", // Corregido de "update" a "PUT"
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -58,7 +57,7 @@ export const useFetchv2 = () => {
         if (!request.ok)
             return {
                 error: true,
-                message: "Ocurrio un error"
+                message: "Ocurrió un error"
             }
         else
             return {
@@ -68,10 +67,10 @@ export const useFetchv2 = () => {
             }
     }
 
-    //Metodo Delete
+    // Método DELETE
     const deleteData = async (url) => {
         const request = fetch(url, {
-            method: "delete",
+            method: "DELETE", // Corregido de "delete" a "DELETE"
             headers: new Headers({
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -80,7 +79,7 @@ export const useFetchv2 = () => {
         if (!request.ok)
             return {
                 error: true,
-                message: "Ocurrio un error"
+                message: "Ocurrió un error"
             }
         else
             return {
@@ -90,10 +89,11 @@ export const useFetchv2 = () => {
             }
     }
 
-    return (
+    // Devolver los métodos como un objeto
+    return {
         getData,
         setData,
         updateData,
         deleteData
-    )
+    }
 }
