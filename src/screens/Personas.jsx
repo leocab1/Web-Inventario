@@ -1,9 +1,11 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components";
 import React, { useState, useEffect } from 'react';
 import QR from "../components/commons/QR"; 
-import { useFetchv2 } from "../hooks/useFetchv2"; // Asegúrate de tener este hook implementado
+import { useFetchv2 } from "../hooks/useFetchv2";
+import Swal from "sweetalert2";
 
-const columnas = [
+const columnas = 
+[
     { name: 'Identificador', selector: row => row.matricula },
     { name: 'Nombre', selector: row => row.nombre },
     { name: 'Tipo', selector: row => row.tipo },
@@ -34,9 +36,42 @@ export const Personas = () => {
     });
     const [qrData, setQrData] = useState('Información de prueba para QR');
 
+    const getPersonas = async () => {
+        try {
+            const personas = await getData('http://localhost/Inventario_Profe_Paulo/Api/Persona');
+            if (personas.error === false) {
+                setPersonas(personas.data); 
+            } else {
+                console.error('Error al obtener personas', personas.error);
+            }
+        } catch (error) {
+            console.error('Error en la solicitud:', error);
+        }
+    };
+
+    
+    const addPersona = async (newPersona) => {
+        try {
+            const response = await setData('http://localhost/Inventario_Profe_Paulo/Api/Persona', newPersona);
+    
+            if (!response.error) {
+                setPersonas(prevState => [...prevState, response.data]);
+                Swal.fire('Éxito', 'Persona agregada correctamente', 'success');
+            } else {
+                console.error('Error al agregar persona', response.message);
+                Swal.fire('Error', response.message, 'error');
+            }
+        } catch (error) {
+            console.error('Error en la solicitud:', error);
+            Swal.fire('Error', 'Ocurrió un error al agregar la persona', 'error');
+        }
+    };
+    
+
+
+
     useEffect(() => {
-        // Si estás obteniendo datos de un API, debes hacer algo como esto:
-        // getData('endpoint-aqui').then(response => setPersonas(response));
+        getPersonas(); // Llama a 'getPersonas' al cargar el componente
     }, []);
 
     const handleChange = (e) => {
@@ -48,9 +83,14 @@ export const Personas = () => {
     };
 
    
-    const handleSubmit = async (e) => {  
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setQrData(JSON.stringify(formData)); 
+        setQrData(JSON.stringify(formData)); // Almacena los datos del formulario en el estado
+    
+        // Llama a la función para agregar la persona, pasando formData (newPersona)
+        await addPersona(formData); 
+        
+        // Abre el modal de éxito
         await handleOpenModal(); 
     };
     
@@ -148,10 +188,9 @@ export const Personas = () => {
                                             />
                                         </div>
                                         <div className="modal-footer justify-content-between">
-               <button type="button"  className="btn btn-default" onClick={handleCloseModal}>Cancelar</button> 
-                 <button   type="submit"className="btn btn-primary">  Aceptar</button>
-</div>
-
+                                            <button type="button" className="btn btn-default" onClick={handleCloseModal}>Cancelar</button> 
+                                            <button type="submit" className="btn btn-primary">Aceptar</button>
+                                        </div>
                                     </form>
 
                                     {showModal && (
@@ -186,7 +225,7 @@ export const Personas = () => {
                                     <h4 className="card-title">Personas registradas</h4>
                                 </div>
                                 <div className="card-body">
-                                    <DTable cols={columnas} info={Personas} /> {/* Usa el estado Personas aquí */}
+                                    <DTable cols={columnas} info={columnas} /> {/* Aquí pasas el estado 'Personas' que ahora tiene los datos de la API */}
                                 </div>
                             </div>
                         </div>

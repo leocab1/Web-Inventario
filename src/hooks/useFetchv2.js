@@ -1,99 +1,143 @@
 export const useFetchv2 = () => {
-    // Método GET
+    
     const getData = async (url) => {
-        const request = fetch(url, {
-            method: "GET",
-            headers: new Headers({
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            })
-        });
-        if (!request.ok)
-            return {
-                error: true,
-                message: "Ocurrió un error"
+        try {
+            const request = await fetch(url, {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!request.ok) {
+                return {
+                    error: true,
+                    message: `Error HTTP ${request.status}: ${request.statusText}`,
+                };
             }
-        else
+
+            const data = await request.json();
             return {
                 error: false,
                 message: "Respuesta exitosa",
-                data: await request.json()
-            }
-    }
+                data,
+            };
+        } catch (error) {
+            console.error('Error en la solicitud GET:', error);
+            return {
+                error: true,
+                message: "Ocurrió un error en la solicitud GET",
+            };
+        }
+    };
 
     // Método POST
     const setData = async (url, data) => {
-        const request = fetch(url, {
-            method: "POST",
-            headers: new Headers({
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }),
-            body: JSON.stringify(data)
-        });
-        if (!request.ok)
-            return {
-                error: true,
-                message: "Ocurrió un error"
+        try {
+            console.log('URL de la solicitud:', url);
+            console.log('Datos enviados:', JSON.stringify(data));
+
+            const request = await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!request.ok) {
+                return {
+                    error: true,
+                    message: `Error HTTP ${request.status}: ${request.statusText}`,
+                };
             }
-        else
+
+            const responseData = await request.json();
             return {
                 error: false,
                 message: "Respuesta exitosa",
-                data: await request.json()
-            }
-    }
+                data: responseData,
+            };
+        } catch (error) {
+            console.error('Error en la solicitud POST:', error);
+            return {
+                error: true,
+                message: "Ocurrió un error en la solicitud POST",
+            };
+        }
+    };
 
     // Método PUT
     const updateData = async (url, data) => {
-        const request = fetch(url, {
-            method: "PUT", // Corregido de "update" a "PUT"
-            headers: new Headers({
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }),
-            body: JSON.stringify(data)
-        });
-        if (!request.ok)
-            return {
-                error: true,
-                message: "Ocurrió un error"
+        try {
+            const request = await fetch(url, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!request.ok) {
+                return {
+                    error: true,
+                    message: `Error HTTP ${request.status}: ${request.statusText}`,
+                };
             }
-        else
+
+            const responseData = await request.json();
             return {
                 error: false,
                 message: "Respuesta exitosa",
-                data: await request.json()
-            }
-    }
+                data: responseData,
+            };
+        } catch (error) {
+            console.error('Error en la solicitud PUT:', error);
+            return {
+                error: true,
+                message: "Ocurrió un error en la solicitud PUT",
+            };
+        }
+    };
 
     // Método DELETE
     const deleteData = async (url) => {
-        const request = fetch(url, {
-            method: "DELETE", // Corregido de "delete" a "DELETE"
-            headers: new Headers({
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            })
-        });
-        if (!request.ok)
+        try {
+            const request = await fetch(url, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            // Intentar obtener el cuerpo JSON solo si la respuesta es válida
+            let responseData = null;
+            if (request.ok) {
+                try {
+                    responseData = await request.json();
+                } catch (e) {
+                    responseData = null; // Si no hay cuerpo JSON
+                }
+            }
+
+            return {
+                error: !request.ok,
+                message: request.ok ? "Respuesta exitosa" : `Error HTTP ${request.status}: ${request.statusText}`,
+                data: responseData,
+            };
+        } catch (error) {
+            console.error('Error en la solicitud DELETE:', error);
             return {
                 error: true,
-                message: "Ocurrió un error"
-            }
-        else
-            return {
-                error: false,
-                message: "Respuesta exitosa",
-                data: await request.json()
-            }
-    }
+                message: "Ocurrió un error en la solicitud DELETE",
+            };
+        }
+    };
 
-    // Devolver los métodos como un objeto
     return {
         getData,
         setData,
         updateData,
-        deleteData
-    }
-}
+        deleteData,
+    };
+};
