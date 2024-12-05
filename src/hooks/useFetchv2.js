@@ -1,138 +1,55 @@
+// useFetchv2.jsx
+
 export const useFetchv2 = () => {
-    
-    const getData = async (url) => {
+    const makeRequest = async (url, method, data = null) => {
         try {
-            const request = await fetch(url, {
-                method: "GET",
+            const options = {
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
-            });
-
-            if (!request.ok) {
-                return {
-                    error: true,
-                    message: `Error HTTP ${request.status}: ${request.statusText}`,
-                };
-            }
-
-            const data = await request.json();
-            return {
-                error: false,
-                message: "Respuesta exitosa",
-                data,
             };
-        } catch (error) {
-            console.error('Error en la solicitud GET:', error);
-            return {
-                error: true,
-                message: "Ocurrió un error en la solicitud GET",
-            };
-        }
-    };
+            if (data) options.body = JSON.stringify(data);
 
-    // Método POST
-    const setData = async (url, data) => {
-        try {
-            console.log('URL de la solicitud:', url);
-            console.log('Datos enviados:', JSON.stringify(data));
+            const response = await fetch(url, options);
 
-            const request = await fetch(url, {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-
-            if (!request.ok) {
-                return {
-                    error: true,
-                    message: `Error HTTP ${request.status}: ${request.statusText}`,
-                };
-            }
-
-            const responseData = await request.json();
-            return {
-                error: false,
-                message: "Respuesta exitosa",
-                data: responseData,
-            };
-        } catch (error) {
-            console.error('Error en la solicitud POST:', error);
-            return {
-                error: true,
-                message: "Ocurrió un error en la solicitud POST",
-            };
-        }
-    };
-
-    // Método PUT
-    const updateData = async (url, data) => {
-        try {
-            const request = await fetch(url, {
-                method: "PUT",
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-
-            if (!request.ok) {
-                return {
-                    error: true,
-                    message: `Error HTTP ${request.status}: ${request.statusText}`,
-                };
-            }
-
-            const responseData = await request.json();
-            return {
-                error: false,
-                message: "Respuesta exitosa",
-                data: responseData,
-            };
-        } catch (error) {
-            console.error('Error en la solicitud PUT:', error);
-            return {
-                error: true,
-                message: "Ocurrió un error en la solicitud PUT",
-            };
-        }
-    };
-
-    // Método DELETE
-    const deleteData = async (url) => {
-        try {
-            const request = await fetch(url, {
-                method: "DELETE",
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            // Intentar obtener el cuerpo JSON solo si la respuesta es válida
             let responseData = null;
-            if (request.ok) {
+
+            if (response.ok) {
                 try {
-                    responseData = await request.json();
-                } catch (e) {
-                    responseData = null; // Si no hay cuerpo JSON
+                    const contentType = response.headers.get("Content-Type");
+                    // Si la respuesta es JSON
+                    if (contentType && contentType.includes("application/json")) {
+                        responseData = await response.json(); // Parsear como JSON
+                    } else {
+                        responseData = await response.text(); // Parsear como texto plano si no es JSON
+                    }
+                } catch {
+                    responseData = null; // Si no se puede parsear, asignar null
                 }
             }
 
             return {
-                error: !request.ok,
-                message: request.ok ? "Respuesta exitosa" : `Error HTTP ${request.status}: ${request.statusText}`,
+                error: !response.ok,
+                message: response.ok
+                    ? "Respuesta exitosa"
+                    : `Error HTTP ${response.status}: ${response.statusText}`,
                 data: responseData,
             };
         } catch (error) {
-            console.error('Error en la solicitud DELETE:', error);
+            console.error(`Error en la solicitud ${method}:`, error);
             return {
                 error: true,
-                message: "Ocurrió un error en la solicitud DELETE",
+                message: `Ocurrió un error en la solicitud ${method}`,
             };
         }
     };
+
+    // Métodos específicos para manejar distintos tipos de solicitud
+    const getData = (url) => makeRequest(url, "GET");
+    const setData = (url, data) => makeRequest(url, "POST", data);
+    const updateData = (url, data) => makeRequest(url, "PUT", data);
+    const deleteData = (url) => makeRequest(url, "DELETE");
 
     return {
         getData,

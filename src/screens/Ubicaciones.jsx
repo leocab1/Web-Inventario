@@ -1,6 +1,10 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components";
 import React, { useState } from 'react';
-import QR from "../components/commons/QR"; 
+import QR from "../components/commons/QR";
+import EliminarB from "./Deleteb";
+import Editar from "./edit";
+import Swal from 'sweetalert2';
+import {Enviar} from '../screens/Enviar'
 
 const columnas = [
     { name: 'Identificador', selector: row => row.matricula },
@@ -11,7 +15,10 @@ const columnas = [
         name: 'Opciones',
         selector: row => row.action,
         cell: (props) => (
-            <button className="btn btn-info btn-sm">Editar</button>
+            <>
+                <Editar onClick={() => handleEdit(props)}/>
+                <EliminarB onClick={() => handleDelete(props)} />
+            </>
         ),
         ignoreRowClick: true,
         allowOverflow: true,
@@ -19,6 +26,7 @@ const columnas = [
     },
 ];
 
+// Datos ficticios de ubicaciones
 const data = [
     {
         id: 1,
@@ -38,6 +46,46 @@ const data = [
     },
 ];
 
+// Funciones de tareas
+
+
+
+
+
+
+
+
+
+
+
+const enviarUbicacion = async (formData) => {
+    try {
+        const response = await fetch('http://localhost/Inventario_Profe_Paulo/Api/ubicacion', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData), // Enviar los datos del formulario
+        });
+
+        if (response.ok) {
+            return await response.json(); // Si es exitoso, retornar la respuesta del servidor
+        } else {
+            throw new Error('Error al agregar ubicación');
+        }
+    } catch (error) {
+        console.error('Error de conexión:', error);
+        throw error; // Lanza el error para que lo maneje quien llame a esta función
+    }
+};
+
+const validarFormulario = (formData) => {
+    if (!formData.edificio || !formData.departamento || !formData.area) {
+        return false; // Si falta algún campo, retornar false
+    }
+    return true; // Si todo está completo, retornar true
+};
+
 export const Ubicaciones = () => {
     const [showModal, setShowModal] = useState(false);
     const [qrData, setQrData] = useState('');
@@ -48,15 +96,13 @@ export const Ubicaciones = () => {
     });
     const [ubicaciones, setUbicaciones] = useState(data); // Estado para las ubicaciones
 
-
-
     const handleCloseModal = () => {
-        setShowModal(false); 
+        setShowModal(false);
         setFormData({
             edificio: "",
             departamento: "",
             area: "",
-        }); // Limpiar el formulario
+        });
     };
 
     const handleOpenModal = () => {
@@ -74,35 +120,51 @@ export const Ubicaciones = () => {
 
     
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Evitar recarga de la página
+        e.preventDefault();
+    
+        if (!validarFormulario(formData)) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Formulario incompleto',
+                text: 'Por favor complete todos los campos antes de continuar.',
+            });
+            return;
+        }
     
         try {
-            const response = await fetch('http://localhost/Inventario_Profe_Paulo/Api/ubicacion', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData), // Enviar los datos del formulario
+            await enviarUbicacion(formData);
+    
+            // Generar datos para el QR
+            setQrData(`Edificio: ${formData.edificio}\nDepartamento: ${formData.departamento}\nÁrea: ${formData.area}`);
+            setShowModal(true); // Abrir el modal para mostrar el QR
+    
+            Swal.fire({
+                icon: 'success',
+                title: '¡Ubicación agregada!',
+                text: 'La ubicación se ha agregado correctamente.',
+                toast: true,
+                position: 'top-end',
+                timer: 2500,
             });
     
-            if (response.ok) {
-                console.log('Ubicación agregada:', response); // Puedes ver la respuesta completa aquí
-                setUbicaciones((prevState) => [...prevState, formData]); // Agregar la nueva ubicación al estado
-                handleOpenModal(); // Abre el modal de éxito
-            } else {
-                console.error('Error al agregar ubicación:', response.statusText);
-            }
+            // Restablecer los datos del formulario
+            setFormData({
+                edificio: "",
+                departamento: "",
+                area: "",
+            });
         } catch (error) {
-            console.error('Error en la solicitud:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: `Hubo un problema al agregar la ubicación: ${error.message}`,
+            });
         }
     };
     
-    
+   
 
-
-
-    
-
+   
     return (
         <>
             <Navbar />
@@ -149,20 +211,24 @@ export const Ubicaciones = () => {
                                             />
                                         </div>
                                         <div className="modal-footer justify-content-between">
-                                            <button type="button" className="btn btn-default" onClick={handleCloseModal}>Cancelar</button> 
-                                            <button type="submit" className="btn btn-primary">Aceptar</button>
-                                        </div>
+    <button className="btn-cancel" onClick={handleCloseModal}>
+        Cancelar
+    </button>
+    <button className="btn-accept" type="submit">
+        Aceptar
+    </button>
+</div>
                                     </form>
                                 </div>
                             </div>
                         </div>
 
                         <div className="col-8">
-                            <div className="card card-primary">
+                            <div className="card card-primary mb-4">
                                 <div className="card-header">
                                     <h4 className="card-title">Ubicaciones registradas</h4>
                                 </div>
-                                <div className="card-body">
+                                <div className="card-body p-4">
                                     <DTable cols={columnas} info={ubicaciones} />
                                 </div>
                             </div>
@@ -179,7 +245,7 @@ export const Ubicaciones = () => {
                             <div className="modal-body p-4">
                                 <div className="text-center">
                                     <i className="ri-check-line h1"></i>
-                                    <h4 className="mt-2">Ubicacion Agregada Correctamente!</h4>
+                                    <h4 className="mt-2">Ubicación Agregada Correctamente!</h4>
                                 </div>
                                 <div className="text-center">
                                     <QR value={qrData} />

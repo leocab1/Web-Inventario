@@ -1,6 +1,8 @@
 import { DTable, Footer, Menu, Navbar, PieChart, Title, BarChart } from "../components";
 import React, { useState } from 'react';
 import QR from "../components/commons/QR";
+import Editar from "./edit";
+import EliminarB from "./Deleteb";
 
 const columnas = [
     {
@@ -22,8 +24,11 @@ const columnas = [
     {
         name: 'Opciones',
         selector: row => row.action,
-        cell: () => (
-            <button className="btn btn-info btn-sm">Editar</button>
+        cell: (props) => (
+            <>
+                <Editar onClick={() => handleEdit(props)}/>
+                <EliminarB onClick={() => handleDelete(props)} />
+            </>
         ),
         ignoreRowClick: true,
         allowOverflow: true,
@@ -132,11 +137,13 @@ export const Informes = () => {
                                         </div>
                                     </form>
                                 </div>
-                                <div className="card-footer">
-                                    <button className="btn btn-secondary" onClick={handleCloseModal}>Cancelar</button>
-                                    <button type="button" className="btn btn-success" onClick={handleOpenModal}>
-                                        Aceptar
-                                    </button>
+                                <div className="modal-footer justify-content-between">
+    <button className="btn-cancel" onClick={handleCloseModal}>
+        Cancelar
+    </button>
+    <button className="btn-accept"  onClick={handleOpenModal}>
+        Aceptar
+    </button>
 
                                     {showModal && (
                                         <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-hidden="true" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>

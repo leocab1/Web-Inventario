@@ -1,6 +1,9 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components"
 import React, { useState } from 'react';
 import QR from "../components/commons/QR"; 
+import EliminarB from "./Deleteb";
+import Editar from "./edit";
+import Enviar from "./Enviar";
 
 const columnas = [
     {
@@ -31,7 +34,10 @@ const columnas = [
         name: 'Opciones',
         selector: row => row.action,
         cell: (props) => (
-            <button className="btn btn-info btn-sm">Editar</button>
+            <>
+                <Editar onClick={() => handleEdit(props)}/>
+                <EliminarB onClick={() => handleDelete(props)} />
+            </>
         ),
         ignoreRowClick: true,
         allowOverflow: true,
@@ -117,12 +123,14 @@ export const Usuarios = () => {
                                     </form>
                                 </div>
                                 <div className="card-footer">
-                                    <button className="btn btn-secondary">Cancelar</button>
-                                    
-                                    <button type="button" className="btn btn-success" onClick={handleOpenModal}>
-                                    Aceptar
-                                </button>
-
+                                <div className="modal-footer justify-content-between">
+    <button className="btn-cancel" onClick={handleCloseModal}>
+        Cancelar
+    </button>
+    <button className="btn-accept"  onClick={handleOpenModal}>
+        Aceptar
+    </button>
+</div>
                                 {showModal && (
                                     <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-hidden="true" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
                                         <div className="modal-dialog modal-sm">
