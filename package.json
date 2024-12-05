@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.7.9",
     "echarts": "^5.5.1",
     "echarts-for-react": "^3.0.2",
     "prop-types": "^15.8.1",
@@ -32,5 +33,5 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "vite": "^5.0.8"
   },
-  "proxy": "https://ti.utpuebla.edu.mx" 
+  "proxy": "https://ti.utpuebla.edu.mx"
 }

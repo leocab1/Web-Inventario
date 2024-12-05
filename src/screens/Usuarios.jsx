@@ -31,6 +31,10 @@ const columnas = [
         selector: row => row.electronico
     },
     {
+        rol: 'rol',
+        selector: row => row.rol
+    },
+    {
         name: 'Opciones',
         selector: row => row.action,
         cell: (props) => (
@@ -120,9 +124,26 @@ export const Usuarios = () => {
                                             <label>Correo electrónico</label>
                                             <input className="form-control" placeholder="yomero@correo.net" />
                                         </div>
+
+                                        <div className="form-group">
+                                            <label>Rol:</label>
+                                            <select
+                                                name="rol"
+                                                className="form-control"
+                                                onChange={handleChange}
+                                                value={newUsuario.rol}
+                                                required
+                                            >
+                                                <option value="admin">Administrador</option>
+                                                <option value="empleado">Empleado</option>
+                                                <option value="supervisor">Supervisor</option>
+                                            </select>
+                                        </div>
+                                        
                                     </form>
                                 </div>
                                 <div className="card-footer">
+                                    
                                 <div className="modal-footer justify-content-between">
     <button className="btn-cancel" onClick={handleCloseModal}>
         Cancelar
