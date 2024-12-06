@@ -1,87 +1,22 @@
 import { Footer, Menu, Navbar, Title } from "../components";
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
-import { ModalEdit } from "../screens/editmodal";
-import { ModalDelete } from "./modaleliminarubi"; // Importamos el ModalDelete
 
 export const Mobiliario = () => {
   const [mobiliario, setMobiliario] = useState([]);
-  const [editingItem, setEditingItem] = useState(null); // Estado para el mobiliario seleccionado
-  const [deletingItem, setDeletingItem] = useState(null); // Estado para el mobiliario seleccionado para eliminar
+  const [newItem, setNewItem] = useState({
+    id_mobiliarion: "",
+    nombre: "",
+    descripcion: "",
+    tipo: "",
+    estado: "",
+    Fecha: "",
+    activo: "",
+    codigo: "",
+    ubicacion: "",
+  });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNewItem({ ...newItem, [name]: value });
-  };
-  
-
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        // Verificar si algún campo está vacío
-        if (
-            !newItem.nombre.trim() ||
-            !newItem.descripcion.trim() ||
-            !newItem.tipo.trim() ||
-            !newItem.estado.trim() ||
-            !newItem.Fecha.trim() ||
-            !newItem.activo.trim() ||
-            !newItem.codigo.trim() ||
-            !newItem.ubicacion.trim()
-        ) {
-            // Mostrar alerta de error si algún campo está vacío
-            Swal.fire({
-                icon: "error",
-                title: "Campos incompletos",
-                text: "Por favor, completa todos los campos antes de enviar el formulario.",
-                toast: true,
-                position: "top-end",
-                timer: 2500,
-                timerProgressBar: true,
-            });
-            return; // Detener el envío del formulario
-        }
-
-        const newMobiliario = {
-            nombre: newItem.nombre.trim(),
-            descripcion: newItem.descripcion.trim(),
-            tipo: newItem.tipo.trim(),
-            estado: newItem.estado.trim(),
-            fecha_registro: newItem.Fecha.trim(),
-            activo: newItem.activo.trim(),
-            codigo: newItem.codigo.trim(),
-            ubicacion: newItem.ubicacion.trim(),
-        };
-
-        try {
-            const response = await fetch("http://localhost/Inventario_Profe_Paulo/Api/Mobiliario", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newMobiliario),
-            });
-            if (!response.ok) throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
-            const data = await response.json();
-            console.log("Mobiliario agregado:", data);
-            Swal.fire({
-                icon: "success",
-                title: "¡Mobiliario agregado!",
-                text: "El mobiliario se ha agregado correctamente.",
-                toast: true,
-                position: "top-end",
-                timer: 2500,
-                timerProgressBar: true,
-            });
-        } catch (error) {
-            console.error("Error al agregar mobiliario:", error.message);
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: `Hubo un problema al agregar el mobiliario: ${error.message}`,
-            });
-        }
-    };
-
-
+  // Función para obtener el mobiliario desde la API
   const getMobiliario = () => {
     fetch("http://localhost/Inventario_Profe_Paulo/Api/Mobiliario")
       .then((response) => {
@@ -102,64 +37,154 @@ export const Mobiliario = () => {
       });
   };
 
-  const handleEdit = (id) => {
-    const itemToEdit = mobiliario.find((item) => item.id === id);
-    if (itemToEdit) {
-      setEditingItem(itemToEdit); // Establece el mobiliario seleccionado para editar
-    }
+  // Función para manejar el cambio de campos en el formulario
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNewItem({ ...newItem, [name]: value });
   };
 
-  const handleDelete = (id) => {
-    const itemToDelete = mobiliario.find((item) => item.id === id);
-    if (itemToDelete) {
-      setDeletingItem(itemToDelete); // Establece el mobiliario seleccionado para eliminar
-    }
-  };
+  // Función para enviar el formulario (agregar nuevo mobiliario o editar existente)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const handleCloseModal = () => {
-    setEditingItem(null); // Cierra el modal de editar
-    setDeletingItem(null); // Cierra el modal de eliminar
-  };
-
-  const handleSave = (updatedItem) => {
-    setMobiliario(
-      mobiliario.map((item) => (item.id === updatedItem.id ? updatedItem : item))
-    ); // Actualiza el mobiliario en la lista
-    setEditingItem(null); // Cierra el modal después de guardar los cambios
-  };
-
-  const [newItem, setNewItem] = useState({
-    nombre: "",
-    descripcion: "",
-    tipo: "",
-    estado: "",
-    Fecha: "",
-    activo: "",
-    codigo: "",
-    ubicacion: "",
-  });
-  
-  
-  const handleDeleteConfirm = (id) => {
-    fetch(`http://localhost/Inventario_Profe_Paulo/Api/Mobiliario/${id}`, {
-      method: "DELETE", // Método DELETE para eliminar el registro
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          Swal.fire("¡Eliminado!", "El mobiliario ha sido eliminado.", "success");
-          setMobiliario(mobiliario.filter((item) => item.id !== id)); // Elimina el item de la lista local
-        } else {
-          Swal.fire("Error", "Hubo un problema al eliminar el mobiliario.", "error");
-        }
-        setDeletingItem(null); // Cierra el modal de eliminar
-      })
-      .catch((error) => {
-        console.error("Error al eliminar:", error);
-        Swal.fire("Error", "Hubo un problema al eliminar el mobiliario.", "error");
-        setDeletingItem(null); // Cierra el modal de eliminar
+    // Verificación de datos
+    if (!newItem.nombre || !newItem.descripcion || !newItem.tipo || !newItem.estado || !newItem.Fecha || !newItem.activo || !newItem.codigo || !newItem.ubicacion) {
+      Swal.fire({
+        icon: "error",
+        title: "Campos incompletos",
+        text: "Por favor, completa todos los campos antes de enviar el formulario.",
+        toast: true,
+        position: "top-end",
+        timer: 2500,
+        timerProgressBar: true,
       });
+      return;
+    }
+
+    // Aquí creamos el objeto de datos, pero solo incluimos la fecha si es nueva o modificada
+    const mobiliarioData = {
+      nombre: newItem.nombre.trim(),
+      descripcion: newItem.descripcion.trim(),
+      tipo: newItem.tipo.trim(),
+      estado: newItem.estado.trim(),
+      activo: newItem.activo.trim(),
+      codigo: newItem.codigo.trim(),
+      ubicacion: newItem.ubicacion.trim(),
+    };
+
+    // Si es un nuevo mobiliario, incluimos la fecha de registro
+    if (!newItem.id_mobiliarion) {
+      mobiliarioData.fecha_registro = newItem.Fecha.trim();
+    }
+
+    try {
+      let response;
+      if (newItem.id_mobiliario	) {
+        // Actualizar mobiliario existente (sin actualizar la fecha)
+        response = await fetch(`http://localhost/Inventario_Profe_Paulo/Api/Mobiliario/${newItem.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(mobiliarioData),
+        });
+      } else {
+        // Agregar nuevo mobiliario
+        response = await fetch("http://localhost/Inventario_Profe_Paulo/Api/Mobiliario", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(mobiliarioData),
+        });
+      }
+
+      if (!response.ok) throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
+      const data = await response.json();
+      Swal.fire({
+        icon: "success",
+        title: newItem.id ? "¡Mobiliario actualizado!" : "¡Mobiliario agregado!",
+        text: newItem.id ? "El mobiliario se ha actualizado correctamente." : "El mobiliario se ha agregado correctamente.",
+        toast: true,
+        position: "top-end",
+        timer: 2500,
+        timerProgressBar: true,
+      });
+
+      // Refrescar la lista de mobiliarios
+      getMobiliario();
+      // Limpiar el formulario solo si estamos agregando (no si estamos actualizando)
+      if (!newItem.id_mobiliarion) {
+        setNewItem({
+          id_mobiliarion: "",
+          nombre: "",
+          descripcion: "",
+          tipo: "",
+          estado: "",
+          Fecha: "",
+          activo: "",
+          codigo: "",
+          ubicacion: "",
+        });
+      }
+    } catch (error) {
+      console.error("Error al procesar la solicitud:", error);
+      Swal.fire({ icon: "error", title: "Error", text: error.message });
+    }
   };
+
+  const handleDelete = async (id_mobiliarion) => {
+    try {
+      console.log(`Eliminando mobiliario con ID: ${id_mobiliarion}`); // Verifica el id
+      const { isConfirmed } = await Swal.fire({
+        title: "Confirmar eliminación",
+        text: "¿Estás seguro de eliminar este mobiliario?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+      });
+  
+      if (!isConfirmed) return; // Si no se confirma, no se elimina
+  
+      const response = await fetch(`http://localhost/Inventario_Profe_Paulo/Api/Mobiliario/${id_mobiliarion}`, {
+        method: "DELETE",  // Método DELETE
+      });
+  
+      console.log(`Respuesta del servidor: ${response.status}`);  // Verifica la respuesta del servidor
+  
+      // Verificar si la respuesta es JSON
+      if (!response.ok) {
+        throw new Error(`HTTP Error ${response.status}: ${response.statusText}`);
+      }
+  
+      // Intentar leer la respuesta como JSON
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const data = await response.json();  // Leer la respuesta JSON
+        if (response.ok) {
+          Swal.fire({
+            icon: 'success',
+            title: '¡Mobiliario eliminado!',
+            toast: true,
+            position: 'top-end',
+            timer: 2500,
+          });
+          getMobiliario();  // Refrescar la lista de mobiliarios
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: data.message || 'Hubo un error al eliminar el mobiliario',
+          });
+        }
+      } else {
+        const errorText = await response.text();  // Si no es JSON, obtener el texto
+        console.error("Error inesperado:", errorText); // Imprimir el error en la consola
+        throw new Error("Respuesta no es JSON.");
+      }
+    } catch (error) {
+      console.error('Error al eliminar mobiliario:', error);
+      Swal.fire({ icon: 'error', title: 'Error', text: error.message });
+    }
+  };
+  
   
 
   useEffect(() => {
@@ -177,120 +202,119 @@ export const Mobiliario = () => {
             <div className="col-12 col-sm-12 col-md-6 mb-3">
               <div className="card card-primary">
                 <div className="card-header">
-                  <h5 className="card-title">Agregar mobiliario/artículo</h5>
+                  <h5 className="card-title">{newItem.id_mobiliarion ? "Editar mobiliario" : "Agregar mobiliario/artículo"}</h5>
                 </div>
                 <div className="card-body">
-                                    <form onSubmit={handleSubmit}>
-                                        <div className="form-group">
-                                            <label>Nombre:</label>
-                                            <input
-                                                type="text"
-                                                name="nombre"
-                                                className="form-control"
-                                                placeholder="Nombre del mobiliario"
-                                                onChange={handleChange}
-                                                value={newItem.nombre}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Descripción:</label>
-                                            <input
-                                                type="text"
-                                                name="descripcion"
-                                                className="form-control"
-                                                placeholder="Descripción breve"
-                                                onChange={handleChange}
-                                                value={newItem.descripcion}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Tipo:</label>
-                                            <select
-                                                name="tipo"
-                                                className="form-control"
-                                                onChange={handleChange}
-                                                value={newItem.tipo}
-                                                required
-                                            >
-                                                <option value="">Seleccione un tipo</option>
-                                                <option value="Escritorio">Escritorio</option>
-                                                <option value="Silla">Silla</option>
-                                                <option value="Armario">Armario</option>
-                                                <option value="Otro">Otro</option>
-                                            </select>
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Estado:</label>
-                                            <select
-                                                name="estado"
-                                                className="form-control"
-                                                onChange={handleChange}
-                                                value={newItem.estado}
-                                                required
-                                            >
-                                                <option value="">Seleccione el estado</option>
-                                                <option value="Nuevo">Nuevo</option>
-                                                <option value="Usado">Usado</option>
-                                                <option value="Dañado">Dañado</option>
-                                            </select>
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Fecha de Registro:</label>
-                                            <input
-                                                type="date"
-                                                name="Fecha"
-                                                className="form-control"
-                                                onChange={handleChange}
-                                                value={newItem.Fecha}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Activo:</label>
-                                            <select
-                                                name="activo"
-                                                className="form-control"
-                                                onChange={handleChange}
-                                                value={newItem.activo}
-                                                required
-                                            >
-                                                <option value="">¿Está activo?</option>
-                                                <option value="1">Sí</option>
-                                                <option value="0">No</option>
-                                            </select>
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Código:</label>
-                                            <input
-                                                type="text"
-                                                name="codigo"
-                                                className="form-control"
-                                                placeholder="Código del mobiliario"
-                                                onChange={handleChange}
-                                                value={newItem.codigo}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Ubicación:</label>
-                                            <input
-                                                type="text"
-                                                name="ubicacion"
-                                                className="form-control"
-                                                placeholder="Ubicación del mobiliario"
-                                                onChange={handleChange}
-                                                value={newItem.ubicacion}
-                                                required
-                                            />
-                                        </div>
-                                        
-                                        <button type="submit" className="btn btn-primary btn-block">
-                                            Agregar Mobiliario
-                                        </button>
-                                    </form>
-                                </div>
+                  <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                      <label>Nombre:</label>
+                      <input
+                        type="text"
+                        name="nombre"
+                        className="form-control"
+                        placeholder="Nombre del mobiliario"
+                        onChange={handleChange}
+                        value={newItem.nombre}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Descripción:</label>
+                      <input
+                        type="text"
+                        name="descripcion"
+                        className="form-control"
+                        placeholder="Descripción breve"
+                        onChange={handleChange}
+                        value={newItem.descripcion}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Tipo:</label>
+                      <select
+                        name="tipo"
+                        className="form-control"
+                        onChange={handleChange}
+                        value={newItem.tipo}
+                        required
+                      >
+                        <option value="">Seleccione un tipo</option>
+                        <option value="Escritorio">Escritorio</option>
+                        <option value="Silla">Silla</option>
+                        <option value="Armario">Armario</option>
+                        <option value="Otro">Otro</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Estado:</label>
+                      <select
+                        name="estado"
+                        className="form-control"
+                        onChange={handleChange}
+                        value={newItem.estado}
+                        required
+                      >
+                        <option value="">Seleccione el estado</option>
+                        <option value="Nuevo">Nuevo</option>
+                        <option value="Usado">Usado</option>
+                        <option value="Dañado">Dañado</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Fecha de Registro:</label>
+                      <input
+                        type="date"
+                        name="Fecha"
+                        className="form-control"
+                        onChange={handleChange}
+                        value={newItem.Fecha}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Activo:</label>
+                      <select
+                        name="activo"
+                        className="form-control"
+                        onChange={handleChange}
+                        value={newItem.activo}
+                        required
+                      >
+                        <option value="">Seleccione</option>
+                        <option value="1">Sí</option>
+                        <option value="0">No</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Código del Mobiliario:</label>
+                      <input
+                        type="text"
+                        name="codigo"
+                        className="form-control"
+                        placeholder="Código del mobiliario"
+                        onChange={handleChange}
+                        value={newItem.codigo}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Ubicación:</label>
+                      <input
+                        type="text"
+                        name="ubicacion"
+                        className="form-control"
+                        placeholder="Ubicación del mobiliario"
+                        onChange={handleChange}
+                        value={newItem.ubicacion}
+                        required
+                      />
+                    </div>
+                    <button type="submit" className="btn btn-primary btn-block">
+                      {newItem.id_mobiliarion ? "Actualizar Mobiliario" : "Agregar Mobiliario"}
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
 
@@ -320,7 +344,7 @@ export const Mobiliario = () => {
                         <tbody>
                           {mobiliario.map((item, index) => (
                             <tr key={index}>
-                              <td>{item.id}</td>
+                              <td>{item.id_mobiliarion}</td>
                               <td>{item.nombre}</td>
                               <td>{item.descripcion}</td>
                               <td>{item.tipo}</td>
@@ -329,20 +353,23 @@ export const Mobiliario = () => {
                               <td>{item.activo === "1" ? "Sí" : "No"}</td>
                               <td>{item.codigo}</td>
                               <td>{item.ubicacion}</td>
-                              <td>
-                                <button
-                                  className="btn btn-sm btn-primary"
-                                  onClick={() => handleEdit(item.id)} // Al hacer clic, se abre el modal con los datos del item
-                                >
-                                  Editar
-                                </button>
-                                <button
-                                  className="btn btn-sm btn-danger ml-1"
-                                  onClick={() => handleDelete(item.id)} // Al hacer clic, se abre el modal de eliminar
-                                >
-                                  Eliminar
-                                </button>
-                              </td>
+                              <td className="text-center">
+  <div className="d-flex justify-content-center align-items-center gap-2">
+    <button
+      className="btn btn-warning"
+      onClick={() => setNewItem(item)} // Cargar el item seleccionado para editar
+    >
+      Editar
+    </button>
+    <button
+      className="btn btn-danger btn-sm"
+      onClick={() => handleDelete(item.id_mobiliarion)} // Eliminar el mobiliario
+    >
+      Eliminar
+    </button>
+  </div>
+</td>
+
                             </tr>
                           ))}
                         </tbody>
@@ -357,25 +384,6 @@ export const Mobiliario = () => {
           </div>
         </section>
       </div>
-
-      {/* Mostrar el ModalEdit cuando se seleccione un item */}
-      {editingItem && (
-        <ModalEdit
-          item={editingItem} // Pasa el mobiliario seleccionado
-          onClose={handleCloseModal} // Función para cerrar el modal
-          onSave={handleSave} // Función para guardar los cambios
-        />
-      )}
-
-      {/* Mostrar el ModalDelete cuando se seleccione un item para eliminar */}
-      {deletingItem && (
-        <ModalDelete
-          item={deletingItem} // Pasa el mobiliario seleccionado para eliminar
-          onClose={handleCloseModal} // Función para cerrar el modal
-          onDelete={handleDeleteConfirm} // Función para confirmar la eliminación
-        />
-      )}
-
       <Footer />
     </>
   );

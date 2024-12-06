@@ -1,4 +1,3 @@
-// ModalEdit.js
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 
@@ -30,7 +29,7 @@ export const ModalEdit = ({ item, onClose, onSave }) => {
       });
       return;
     }
-    
+
     try {
       const response = await fetch(`http://localhost/Inventario_Profe_Paulo/Api/Mobiliario/${editedItem.id}`, {
         method: "PUT",
@@ -116,21 +115,21 @@ export const ModalEdit = ({ item, onClose, onSave }) => {
                 />
               </div>
               <div className="form-group">
-                                            <label>Tipo:</label>
-                                            <select
-                                                name="tipo"
-                                                className="form-control"
-                                                onChange={handleChange}
-                                                value={editedItem.tipo}
-                                                required
-                                            >
-                                                <option value="">Seleccione un tipo</option>
-                                                <option value="Escritorio">Escritorio</option>
-                                                <option value="Silla">Silla</option>
-                                                <option value="Armario">Armario</option>
-                                                <option value="Otro">Otro</option>
-                                            </select>
-                                        </div>
+                <label>Tipo:</label>
+                <select
+                  name="tipo"
+                  className="form-control"
+                  onChange={handleChange}
+                  value={editedItem.tipo}
+                  required
+                >
+                  <option value="">Seleccione un tipo</option>
+                  <option value="Escritorio">Escritorio</option>
+                  <option value="Silla">Silla</option>
+                  <option value="Armario">Armario</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
             </form>
           </div>
           <div className="modal-footer">

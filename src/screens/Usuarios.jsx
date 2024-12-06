@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { Footer, Menu, Navbar, Title } from "../components";
-import EliminarB from "./Deleteb";
-import Editar from "./edit";
+import QR from "../components/commons/QR";
+import Swal from "sweetalert2";  // Importar SweetAlert
 
 export const Usuarios = () => {
     const [formData, setFormData] = useState({
@@ -14,30 +14,28 @@ export const Usuarios = () => {
         rol: "",
         areas: "",
     });
+    const [qrData, setQrData] = useState(""); // Estado para almacenar la información del QR
 
+    const [isEditing, setIsEditing] = useState(false);
     const [data, setData] = useState([]);
 
-   
+    // Obtener usuarios desde la API
     const fetchData = async () => {
         try {
             const response = await fetch("http://localhost/Inventario_Profe_Paulo/Api/usuarios");
             const result = await response.json();
-            
-            // Acceder a la propiedad 'data' en la respuesta de la API
             if (Array.isArray(result.data)) {
-                setData(result.data); // Usamos 'data' como el array que contiene los usuarios
+                setData(result.data);
             } else {
                 console.error("La API no devolvió un array en 'data':", result);
-                setData([]); // Asegura que 'data' sea un array vacío en caso de error
+                setData([]);
             }
         } catch (error) {
             console.error("Error al cargar los usuarios:", error);
-            setData([]); // Asegura que 'data' sea un array vacío en caso de error
+            setData([]);
         }
     };
-    
 
-    // Llamar a la función fetchData cuando el componente se monta
     useEffect(() => {
         fetchData();
     }, []);
@@ -47,68 +45,187 @@ export const Usuarios = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+  
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Previene el comportamiento predeterminado del formulario
+        e.preventDefault();
+        
+        // Validar campos antes de enviar el formulario
+        if (
+            !formData.matricula ||
+            !formData.nombre ||
+            !formData.paterno ||
+            !formData.materno ||
+            !formData.telefono ||
+            !formData.electronico ||
+            !formData.rol ||
+            !formData.areas
+        ) {
+            // Si algún campo está vacío, mostrar una alerta y no enviar el formulario
+            Swal.fire({
+                icon: 'error',
+                title: 'Campos incompletos',
+                text: 'Por favor, completa todos los campos antes de enviar el formulario.',
+                toast: true,
+                position: 'top-end',
+                timer: 2500,
+            });
+            return; // Detener la ejecución de la función
+        }
+    
+        const method = isEditing ? "PUT" : "POST";
+        const url = isEditing
+            ? `http://localhost/Inventario_Profe_Paulo/Api/usuarios/${formData.id}`
+            : "http://localhost/Inventario_Profe_Paulo/Api/usuarios";
+        
+        const success = await sendRequest(method, url, formData);
+        
+        if (success) {
+            fetchData();  // Vuelve a obtener los datos para actualizar la tabla
+            resetForm();  // Limpiar el formulario
+            if (!isEditing) {
+                // Solo generar QR después de agregar un usuario
+                const qrValue = JSON.stringify({
+                    matricula: formData.matricula,
+                    nombre: formData.nombre,
+                    paterno: formData.paterno,
+                    materno: formData.materno
+                }); // Convertir a JSON para asegurar que los datos sean correctos
+                setQrData(qrValue); // Generar el QR con la matrícula y otros datos
+                setQrData(JSON.stringify(persona)); // Generar QR con datos
+
+            }
+        }
+    };
+    
+
+    
+    const sendRequest = async (method, url, formData) => {
         try {
-            const response = await fetch("http://localhost/Inventario_Profe_Paulo/Api/usuarios", {
-                method: "POST",
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(formData),
             });
-
+    
             const result = await response.json();
-
+    
             if (response.ok) {
-                alert("Usuario agregado correctamente");
-                fetchData(); // Vuelve a cargar los usuarios después de agregar uno
-                setFormData({ 
-                    matricula: "",
-                    nombre: "",
-                    paterno: "",
-                    materno: "",
-                    telefono: "",
-                    electronico: "",
-                    rol: "",
-                    areas: "",
+                Swal.fire({
+                    icon: 'success',
+                    title: method === "PUT" ? "¡Usuario actualizado!" : "¡Usuario agregado!",
+                    text: 'La operación se ha realizado con éxito.',
+                    toast: true,
+                    position: 'top-end',
+                    timer: 2500,
                 });
+                return true;
             } else {
-                alert("Error: " + result.message);
+                console.error("Error en el servidor:", result);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al procesar la solicitud',
+                    text: result.message || "No se pudo procesar la solicitud.",
+                    toast: true,
+                    position: 'top-end',
+                    timer: 2500,
+                });
+                return false;
             }
         } catch (error) {
-            console.error("Error:", error);
-            alert("Error al intentar agregar el usuario.");
+            console.error("Error en la solicitud:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al intentar agregar o actualizar el usuario',
+                text: 'Hubo un problema al procesar la solicitud.',
+                toast: true,
+                position: 'top-end',
+                timer: 2500,
+            });
+            return false;
         }
     };
-
     const handleEdit = (row) => {
-        // Llena el formulario con los datos existentes
         setFormData(row);
+        setIsEditing(true);
     };
 
     const handleDelete = (row) => {
-        if (window.confirm(`¿Estás seguro de eliminar al usuario ${row.nombre}?`)) {
-            eliminarUsuario(row.id);
-        }
+        console.log("ID que se pasa para eliminar:", row.id);  // Añadir este log para ver qué valor tiene 'row.id'
+        Swal.fire({
+            title: `¿Estás seguro de eliminar al usuario ${row.nombre}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                eliminarUsuario(row.id);  // Asegúrate de pasar el 'id' y no 'matricula'
+            }
+        });
     };
 
-    const eliminarUsuario = async (id) => {
-        try {
-            const response = await fetch(`http://localhost/Inventario_Profe_Paulo/Api/usuarios/${id}`, {
-                method: "DELETE",
-            });
 
-            if (response.ok) {
-                alert("Usuario eliminado correctamente");
-                fetchData(); // Recarga los datos después de eliminar
-            } else {
-                alert("Error al eliminar el usuario.");
-            }
-        } catch (error) {
-            console.error("Error al eliminar usuario:", error);
-            alert("Error al intentar eliminar el usuario.");
+const eliminarUsuario = async (id) => {
+    if (!id) {
+        console.error("ID no válido");
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost/Inventario_Profe_Paulo/Api/usuarios/${id}`, {
+            method: "DELETE",
+        });
+
+        if (response.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Usuario eliminado!',
+                text: 'El usuario ha sido eliminado con éxito.',
+                toast: true,
+                position: 'top-end',
+                timer: 2500,
+            });
+            fetchData();  // Recargar la lista de usuarios
+        } else {
+            const errorResponse = await response.json();
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al eliminar el usuario',
+                text: errorResponse.message || 'Desconocido',
+                toast: true,
+                position: 'top-end',
+                timer: 2500,
+            });
+            console.error("Error al eliminar usuario:", errorResponse);
         }
+    } catch (error) {
+        console.error("Error en la solicitud DELETE:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error al intentar eliminar el usuario',
+            text: 'Hubo un problema al eliminar el usuario.',
+            toast: true,
+            position: 'top-end',
+            timer: 2500,
+        });
+    }
+};
+
+    const resetForm = () => {
+        setFormData({
+            matricula: "",
+            nombre: "",
+            paterno: "",
+            materno: "",
+            telefono: "",
+            electronico: "",
+            rol: "",
+            areas: "",
+        });
+        setIsEditing(false);
+        setQrData("");  // Limpiar el QR al resetear el formulario
     };
 
     return (
@@ -122,7 +239,7 @@ export const Usuarios = () => {
                         <div className="col-4">
                             <div className="card card-primary">
                                 <div className="card-header">
-                                    <h4 className="card-title">Agregar persona</h4>
+                                    <h4 className="card-title">{isEditing ? "Editar" : "Agregar"} persona</h4>
                                 </div>
                                 <div className="card-body">
                                     <form onSubmit={handleSubmit}>
@@ -153,7 +270,15 @@ export const Usuarios = () => {
                                                 <option value="Otro">Otro</option>
                                             </select>
                                         </div>
-                                        <button type="submit" className="btn btn-primary">Aceptar</button>
+                                        <button type="submit" className="btn btn-primary">{isEditing ? "Actualizar" : "Agregar"}</button>
+                                        {isEditing && (
+                                            <button type="button" className="btn btn-secondary ml-2" onClick={resetForm}>
+                                                Cancelar
+                                            </button>
+                                        )}
+                                         <div className="mt-3">
+                                            {qrData && <QR value={qrData} />}
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -164,10 +289,13 @@ export const Usuarios = () => {
                                     <h4 className="card-title">Personas registradas</h4>
                                 </div>
                                 <div className="card-body">
+                                <div className="table-responsive">
                                     {data.length === 0 ? (
-                                        <p>There are no records to display</p>
+                                        <td colSpan="4" className="text-center">
+                                        No se encontraron ubicaciones.
+                                    </td>
                                     ) : (
-                                        <table className="table table-bordered">
+                                        <table className="table table-bordered table-striped">
                                             <thead>
                                                 <tr>
                                                     <th>Identificador</th>
@@ -177,13 +305,12 @@ export const Usuarios = () => {
                                                     <th>Teléfono</th>
                                                     <th>Correo Electrónico</th>
                                                     <th>Rol</th>
-                                                    <th>Áreas Asignadas</th>
-                                                    <th>Opciones</th>
+                                                    <th>Acciones</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {data.map((row) => (
-                                                    <tr key={row.matricula}>
+                                                    <tr key={row.id}>
                                                         <td>{row.matricula}</td>
                                                         <td>{row.nombre}</td>
                                                         <td>{row.paterno}</td>
@@ -191,11 +318,23 @@ export const Usuarios = () => {
                                                         <td>{row.telefono}</td>
                                                         <td>{row.electronico}</td>
                                                         <td>{row.rol}</td>
-                                                        <td>{row.areas}</td>
-                                                        <td>
-                                                            <Editar onClick={() => handleEdit(row)} />
-                                                            <EliminarB onClick={() => handleDelete(row)} />
-                                                        </td>
+                                                        <td className="text-center">
+    <div className="d-flex justify-content-center align-items-center gap-2">
+        <button
+ className="btn btn-warning btn-sm"
+             onClick={() => handleEdit(row)}
+        >
+        Editar
+        </button>
+        <button
+  className="btn btn-danger btn-sm"
+
+            onClick={() => handleDelete(row)}
+        >
+         Eliminar
+        </button>
+    </div>
+</td>
                                                     </tr>
                                                 ))}
                                             </tbody>
@@ -205,7 +344,9 @@ export const Usuarios = () => {
                             </div>
                         </div>
                     </div>
+                    </div>
                 </section>
+                
             </div>
             <Footer />
         </>
