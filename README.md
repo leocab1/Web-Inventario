@@ -1,5 +1,10 @@
 # InveCastor Sitio Web Intventario 
 
+- Sitio Web de inventario, con cuatro apartados de Funcionalidad
+- Agregar Mobiliaro (funciones, editar y eliminar)
+- Agregar Personas (funciones, editar y eliminar)
+- Agregar Ubicacion (funciones, editar y eliminar)
+- -Agregar Usuarios (funciones, editar y eliminar)
 
 
 
