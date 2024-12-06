@@ -29,34 +29,24 @@ const eliminarUbicacion = async (id_ubicacion) => {
             },
         });
 
-        // Verifica si la respuesta es exitosa
         if (response.ok) {
             const data = await response.json();
-            console.log('Respuesta de la API:', data);  // Revisa lo que devuelve la API en consola
+            console.log('Respuesta de la API:', data);  
 
-            // Asegúrate de que la respuesta sea la esperada
             if (data.status === 'ok' && data.message === 'Ubicacion eliminada') {
-                // Alerta animada de éxito con SweetAlert2
                 await Swal.fire({
                     icon: 'success',
                     title: '¡Ubicación eliminada!',
                     text: 'La ubicación se ha eliminado correctamente.',
                     showConfirmButton: false,
-                    timer: 1500,  // Desaparece automáticamente después de 1.5 segundos
-                    position: 'top-end',  // Posición animada
-                    toast: true,  // Modo toast
-                    background: '#4BB543',  // Fondo verde
-                    color: '#fff',  // Color del texto blanco
-                    showClass: {
-                        popup: 'animate__animated animate__fadeInRight'
-                    },
-                    hideClass: {
-                        popup: 'animate__animated animate__fadeOutRight'
-                    }
+                    timer: 1000, 
+                    position: 'top-end',
+                    toast: true,
+                    background: '#4BB543',
+                    color: '#fff',  
                 });
-                return true;  // La ubicación se eliminó correctamente
+                return true;  
             } else {
-                // Alerta animada de error si algo falla
                 await Swal.fire({
                     icon: 'error',
                     title: '¡Error!',
@@ -75,7 +65,6 @@ const eliminarUbicacion = async (id_ubicacion) => {
                 return false;  // Hubo un error al eliminar
             }
         } else {
-            // Alerta animada de error si la respuesta HTTP no es OK
             await Swal.fire({
                 icon: 'error',
                 title: '¡Error!',
@@ -94,7 +83,6 @@ const eliminarUbicacion = async (id_ubicacion) => {
             return false;
         }
     } catch (error) {
-        // Alerta animada de error si ocurre un error en la conexión
         await Swal.fire({
             icon: 'error',
             title: 'Error de conexión',
@@ -157,8 +145,8 @@ export const Ubicaciones = () => {
         area: "",
     });
     const [ubicaciones, setUbicaciones] = useState([]);
-    const [currentId, setCurrentId] = useState(null); // Establecer el estado para el ID actual
-    const [isEditing, setIsEditing] = useState(false); // Estado para determinar si estamos editando
+    const [currentId, setCurrentId] = useState(null); 
+    const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
         const fetchUbicaciones = async () => {
@@ -193,7 +181,6 @@ export const Ubicaciones = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validación del formulario
         if (!validarFormulario(formData)) {
             Swal.fire({
                 icon: 'warning',
@@ -205,7 +192,6 @@ export const Ubicaciones = () => {
 
         try {
             if (isEditing) {
-                // Modo edición
                 const updatedUbicacion = await actualizarUbicacion(formData);
                 if (updatedUbicacion && updatedUbicacion.status === 'ok') {
                     Swal.fire({
@@ -228,7 +214,6 @@ export const Ubicaciones = () => {
                     throw new Error('La respuesta de la API no contiene los datos correctos.');
                 }
             } else {
-                // Modo agregar
                 const newUbicacion = await enviarUbicacion(formData);
                 if (newUbicacion && newUbicacion.status === 'ok') {
                     const qrContent = JSON.stringify({
@@ -236,7 +221,7 @@ export const Ubicaciones = () => {
                         departamento: formData.departamento,
                         area: formData.area,
                     });
-                    setQrData(qrContent); // Generar el QR con los datos
+                    setQrData(qrContent); 
                     Swal.fire({
                         icon: 'success',
                         title: '¡Ubicación agregada!',
