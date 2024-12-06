@@ -4,7 +4,12 @@
 - Agregar Mobiliaro (funciones, editar y eliminar)
 - Agregar Personas (funciones, editar y eliminar)
 - Agregar Ubicacion (funciones, editar y eliminar)
-- -Agregar Usuarios (funciones, editar y eliminar)
+- Agregar Usuarios (funciones, editar y eliminar)
+
+
+# Formato de uso correcto del sistema 
+
+- actualizamos, varios componentes desde formularios, hasta consumos de endpoint, 
 
 
 
