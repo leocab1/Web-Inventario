@@ -276,9 +276,17 @@ const eliminarUsuario = async (id) => {
                                                 Cancelar
                                             </button>
                                         )}
-                                         <div className="mt-3">
-                                            {qrData && <QR value={qrData} />}
-                                        </div>
+                                        {qrData && (
+                <div className="mt-4 text-center">
+                  <div className="d-flex justify-content-center">
+                    <div className="border p-3 rounded shadow-sm">
+                      <QR value={qrData} size={200} />
+                    </div>
+                  </div>
+                  <p className="mt-2">Escanea este código QR para más detalles.</p>
+                </div>
+              )}
+
                                     </form>
                                 </div>
                             </div>

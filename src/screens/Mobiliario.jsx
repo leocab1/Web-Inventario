@@ -43,12 +43,11 @@ export const Mobiliario = () => {
     setNewItem({ ...newItem, [name]: value });
   };
 
-  // Función para enviar el formulario (agregar nuevo mobiliario o editar existente)
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     // Verificación de datos
-    if (!newItem.nombre || !newItem.descripcion || !newItem.tipo || !newItem.estado || !newItem.Fecha || !newItem.activo || !newItem.codigo || !newItem.ubicacion) {
+    if (!newItem.nombre || !newItem.descripcion || !newItem.tipo || !newItem.estado || !newItem.activo || !newItem.codigo || !newItem.ubicacion) {
       Swal.fire({
         icon: "error",
         title: "Campos incompletos",
@@ -60,8 +59,8 @@ export const Mobiliario = () => {
       });
       return;
     }
-
-    // Aquí creamos el objeto de datos, pero solo incluimos la fecha si es nueva o modificada
+  
+    // Aquí creamos el objeto de datos
     const mobiliarioData = {
       nombre: newItem.nombre.trim(),
       descripcion: newItem.descripcion.trim(),
@@ -71,42 +70,42 @@ export const Mobiliario = () => {
       codigo: newItem.codigo.trim(),
       ubicacion: newItem.ubicacion.trim(),
     };
-
+  
     // Si es un nuevo mobiliario, incluimos la fecha de registro
     if (!newItem.id_mobiliarion) {
-      mobiliarioData.fecha_registro = newItem.Fecha.trim();
+      mobiliarioData.fecha_registro = newItem.Fecha.trim();  // Solo se incluye en un nuevo registro
     }
-
+  
     try {
       let response;
-      if (newItem.id_mobiliario	) {
-        // Actualizar mobiliario existente (sin actualizar la fecha)
-        response = await fetch(`http://localhost/Inventario_Profe_Paulo/Api/Mobiliario/${newItem.id}`, {
+      if (newItem.id_mobiliarion) {
+        // Actualizar mobiliario existente sin modificar la fecha
+        response = await fetch(`http://localhost/Inventario_Profe_Paulo/Api/Mobiliario/${newItem.id_mobiliarion}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(mobiliarioData),
         });
       } else {
-        // Agregar nuevo mobiliario
+        // Agregar nuevo mobiliario con la fecha
         response = await fetch("http://localhost/Inventario_Profe_Paulo/Api/Mobiliario", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(mobiliarioData),
         });
       }
-
+  
       if (!response.ok) throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
       const data = await response.json();
       Swal.fire({
         icon: "success",
-        title: newItem.id ? "¡Mobiliario actualizado!" : "¡Mobiliario agregado!",
-        text: newItem.id ? "El mobiliario se ha actualizado correctamente." : "El mobiliario se ha agregado correctamente.",
+        title: newItem.id_mobiliarion ? "¡Mobiliario actualizado!" : "¡Mobiliario agregado!",
+        text: newItem.id_mobiliarion ? "El mobiliario se ha actualizado correctamente." : "El mobiliario se ha agregado correctamente.",
         toast: true,
         position: "top-end",
         timer: 2500,
         timerProgressBar: true,
       });
-
+  
       // Refrescar la lista de mobiliarios
       getMobiliario();
       // Limpiar el formulario solo si estamos agregando (no si estamos actualizando)
@@ -128,6 +127,7 @@ export const Mobiliario = () => {
       Swal.fire({ icon: "error", title: "Error", text: error.message });
     }
   };
+  
 
   const handleDelete = async (id_mobiliarion) => {
     try {

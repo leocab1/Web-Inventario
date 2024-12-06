@@ -212,10 +212,15 @@ export const Personas = () => {
                                             {formData.id_persona ? "Actualizar" : "Agregar"}
                                         </button>
                                         {qrData && (
-                                        <div className="mt-3">
-                                            <QR value={qrData} />
-                                        </div>
-                                    )}
+                <div className="mt-4 text-center">
+                  <div className="d-flex justify-content-center">
+                    <div className="border p-3 rounded shadow-sm">
+                      <QR value={qrData} size={200} />
+                    </div>
+                  </div>
+                  <p className="mt-2">Escanea este código QR para más detalles.</p>
+                </div>
+              )}
                                     </form>
                                 </div>
                             </div>
