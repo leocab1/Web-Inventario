@@ -1,10 +1,10 @@
 import { DTable, Footer, Menu, Navbar, Title } from "../components";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import QR from "../components/commons/QR";
 import EliminarB from "./Deleteb";
 import Editar from "./edit";
 import Swal from 'sweetalert2';
-import {Enviar} from '../screens/Enviar'
+import { Enviar } from '../screens/Enviar';
 
 const columnas = [
     { name: 'Identificador', selector: row => row.matricula },
@@ -16,7 +16,7 @@ const columnas = [
         selector: row => row.action,
         cell: (props) => (
             <>
-                <Editar onClick={() => handleEdit(props)}/>
+                <Editar onClick={() => handleEdit(props)} />
                 <EliminarB onClick={() => handleDelete(props)} />
             </>
         ),
@@ -26,37 +26,86 @@ const columnas = [
     },
 ];
 
-// Datos ficticios de ubicaciones
-const data = [
-    {
-        id: 1,
-        matricula: "ZAQ0001",
-        edificio: "K5",
-        departamento: "Tecnologias de la Informacion",
-        area: "Laboratorio 211",
-        action: "Editar",
-    },
-    {
-        id: 2,
-        matricula: "ZAQ0002",
-        edificio: "K4",
-        departamento: "Edificio X",
-        area: "Laboratorio UWU",
-        action: "Editar",
-    },
-];
+// Funciones para obtener, editar y eliminar ubicaciones
 
-// Funciones de tareas
+const obtenerUbicaciones = async () => {
+    try {
+        const response = await fetch('http://localhost/Inventario_Profe_Paulo/Api/ubicacion');
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            throw new Error('Error al obtener ubicaciones');
+        }
+    } catch (error) {
+        console.error('Error de conexión:', error);
+        return [];
+    }
+};
 
+const eliminarUbicacion = async (id) => {
+    try {
+        const response = await fetch(`http://localhost/Inventario_Profe_Paulo/Api/ubicacion/${id}`, {
+            method: 'DELETE',
+        });
+        if (response.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Ubicación eliminada!',
+                text: 'La ubicación ha sido eliminada correctamente.',
+                toast: true,
+                position: 'top-end',
+                timer: 2500,
+            });
+            return true;
+        } else {
+            throw new Error('Error al eliminar ubicación');
+        }
+    } catch (error) {
+        console.error('Error de conexión:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un problema al eliminar la ubicación.',
+        });
+        return false;
+    }
+};
 
+const editarUbicacion = async (id, formData) => {
+    try {
+        const response = await fetch(`http://localhost/Inventario_Profe_Paulo/Api/ubicacion/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+        if (response.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Ubicación actualizada!',
+                text: 'La ubicación se ha actualizado correctamente.',
+                toast: true,
+                position: 'top-end',
+                timer: 2500,
+            });
+            return true;
+        } else {
+            throw new Error('Error al actualizar ubicación');
+        }
+    } catch (error) {
+        console.error('Error de conexión:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un problema al actualizar la ubicación.',
+        });
+        return false;
+    }
+};
 
-
-
-
-
-
-
-
+// Funciones de manejo de formulario
 
 const enviarUbicacion = async (formData) => {
     try {
@@ -65,7 +114,7 @@ const enviarUbicacion = async (formData) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(formData), // Enviar los datos del formulario
+            body: JSON.stringify(formData),
         });
 
         if (response.ok) {
@@ -94,7 +143,15 @@ export const Ubicaciones = () => {
         departamento: "",
         area: "",
     });
-    const [ubicaciones, setUbicaciones] = useState(data); // Estado para las ubicaciones
+    const [ubicaciones, setUbicaciones] = useState([]); // Estado para las ubicaciones
+
+    useEffect(() => {
+        const fetchUbicaciones = async () => {
+            const data = await obtenerUbicaciones();
+            setUbicaciones(data);
+        };
+        fetchUbicaciones();
+    }, []);
 
     const handleCloseModal = () => {
         setShowModal(false);
@@ -117,11 +174,9 @@ export const Ubicaciones = () => {
         });
     };
 
-
-    
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         if (!validarFormulario(formData)) {
             Swal.fire({
                 icon: 'warning',
@@ -130,14 +185,10 @@ export const Ubicaciones = () => {
             });
             return;
         }
-    
+
         try {
             await enviarUbicacion(formData);
-    
-            // Generar datos para el QR
-            setQrData(`Edificio: ${formData.edificio}\nDepartamento: ${formData.departamento}\nÁrea: ${formData.area}`);
-            setShowModal(true); // Abrir el modal para mostrar el QR
-    
+
             Swal.fire({
                 icon: 'success',
                 title: '¡Ubicación agregada!',
@@ -146,13 +197,17 @@ export const Ubicaciones = () => {
                 position: 'top-end',
                 timer: 2500,
             });
-    
-            // Restablecer los datos del formulario
+
+            // Restablecer los datos del formulario y actualizar la lista de ubicaciones
             setFormData({
                 edificio: "",
                 departamento: "",
                 area: "",
             });
+
+            const updatedUbicaciones = await obtenerUbicaciones();
+            setUbicaciones(updatedUbicaciones);
+
         } catch (error) {
             Swal.fire({
                 icon: 'error',
@@ -161,10 +216,25 @@ export const Ubicaciones = () => {
             });
         }
     };
-    
-   
 
-   
+    const handleDelete = async (ubicacion) => {
+        const isDeleted = await eliminarUbicacion(ubicacion.id);
+        if (isDeleted) {
+            const updatedUbicaciones = await obtenerUbicaciones();
+            setUbicaciones(updatedUbicaciones);
+        }
+    };
+
+    const handleEdit = async (ubicacion) => {
+        const updatedFormData = {
+            edificio: ubicacion.edificio,
+            departamento: ubicacion.departamento,
+            area: ubicacion.area,
+        };
+        setFormData(updatedFormData);
+        setShowModal(true);
+    };
+
     return (
         <>
             <Navbar />
@@ -211,56 +281,34 @@ export const Ubicaciones = () => {
                                             />
                                         </div>
                                         <div className="modal-footer justify-content-between">
-    <button className="btn-cancel" onClick={handleCloseModal}>
-        Cancelar
-    </button>
-    <button className="btn-accept" type="submit">
-        Aceptar
-    </button>
-</div>
+                                            <button className="btn-cancel" onClick={handleCloseModal}>
+                                                Cancelar
+                                            </button>
+                                            <button className="btn-accept" type="submit">
+                                                Aceptar
+                                            </button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
 
                         <div className="col-8">
-                            <div className="card card-primary mb-4">
+                            <div className="card card-primary">
                                 <div className="card-header">
-                                    <h4 className="card-title">Ubicaciones registradas</h4>
+                                    <h4 className="card-title">Listado de Ubicaciones</h4>
                                 </div>
-                                <div className="card-body p-4">
-                                    <DTable cols={columnas} info={ubicaciones} />
+                                <div className="card-body">
+                                    <DTable
+                                        columnas={columnas}
+                                        data={ubicaciones}
+                                    />
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
             </div>
-
-            {/* Modal de confirmación */}
-            {showModal && (
-                <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-hidden="true" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                    <div className="modal-dialog modal-sm">
-                        <div className="modal-content modal-filled bg-success">
-                            <div className="modal-body p-4">
-                                <div className="text-center">
-                                    <i className="ri-check-line h1"></i>
-                                    <h4 className="mt-2">Ubicación Agregada Correctamente!</h4>
-                                </div>
-                                <div className="text-center">
-                                    <QR value={qrData} />
-                                </div>
-                                <div className="text-center">
-                                    <button type="button" className="btn btn-light my-2" onClick={handleCloseModal}>
-                                        Aceptar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             <Footer />
         </>
     );

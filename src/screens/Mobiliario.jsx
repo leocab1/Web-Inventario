@@ -1,76 +1,21 @@
-import { DTable, Footer, Menu, Navbar, Title } from "../components";
+import { Footer, Menu, Navbar, Title } from "../components";
 import React, { useState, useEffect } from "react";
-import { useFetchv2 } from "../hooks/useFetchv2";
-import QR from "../components/commons/QR";
 import Swal from "sweetalert2";
-import EliminarB from "./Deleteb";
-import Editar from "./edit";
-
-
-const columnas = [
-    { name: "Identificador", selector: (row) => row.matricula },
-    { name: "Nombre", selector: (row) => row.nombre },
-    { name: "Descripción", selector: (row) => row.descripcion },
-    { name: "Tipo", selector: (row) => row.tipo },
-    { name: "Estado", selector: (row) => row.estado },
-    { name: "Fecha Registro", selector: (row) => row.Fecha },
-    { name: "Activo", selector: (row) => row.activo },
-    { name: "Código", selector: (row) => row.codigo },
-    { name: "Ubicación", selector: (row) => row.ubicacion },
-    {
-        name: "Opciones",
-        selector: (row) => row.action,
-        cell: (props) => (
-            <>
-                <Editar onClick={() => handleEdit(props)} />
-                <EliminarB onClick={() => handleDelete(props)} />
-            </>
-        ),
-        ignoreRowClick: true,
-        allowOverflow: true,
-        button: true,
-    },
-];
+import { ModalEdit } from "../screens/editmodal";
+import { ModalDelete } from "./modaleliminarubi"; // Importamos el ModalDelete
 
 export const Mobiliario = () => {
-    const [showModal, setShowModal] = useState(false);
-    const { getData } = useFetchv2();
-    const [mobiliario, setMobiliario] = useState([]);
-    const [newItem, setNewItem] = useState({
-        matricula: "",
-        nombre: "",
-        descripcion: "",
-        tipo: "",
-        estado: "",
-        Fecha: "",
-        activo: "",
-        codigo: "",
-        ubicacion: "",
-    });
-    const [qrData, setQrData] = useState("Información de prueba para QR");
+  const [mobiliario, setMobiliario] = useState([]);
+  const [editingItem, setEditingItem] = useState(null); // Estado para el mobiliario seleccionado
+  const [deletingItem, setDeletingItem] = useState(null); // Estado para el mobiliario seleccionado para eliminar
 
-    const getMobiliario = async () => {
-        try {
-            const mobiliario = await getData("http://localhost/Inventario_Profe_Paulo/Api/Mobiliario");
-            if (mobiliario.error === false) {
-                setMobiliario(mobiliario.data);
-            } else {
-                console.error("Error al obtener mobiliario:", mobiliario.error);
-            }
-        } catch (error) {
-            console.error("Error en la solicitud:", error);
-        }
-    };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNewItem({ ...newItem, [name]: value });
+  };
+  
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setNewItem({
-            ...newItem,
-            [name]: value,
-        });
-    };
-
-    const handleSubmit = async (e) => {
+      const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Verificar si algún campo está vacío
@@ -136,24 +81,105 @@ export const Mobiliario = () => {
         }
     };
 
-    useEffect(() => {
-        getMobiliario();
-    }, []);
 
-    return (
-        <>
-            <Navbar />
-            <Menu nombre="InveCastor" usuario="Castorcito UWU" />
-            <div className="content-wrapper">
-                <Title title="Mobiliario" breadcrums={["Inicio", "Mobiliario"]} />
-                <section className="content">
-                    <div className="row">
-                        <div className="col-4">
-                            <div className="card card-primary">
-                                <div className="card-header">
-                                    <h4 className="card-title">Agregar mobiliario/artículo</h4>
-                                </div>
-                                <div className="card-body">
+  const getMobiliario = () => {
+    fetch("http://localhost/Inventario_Profe_Paulo/Api/Mobiliario")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data && data.data && Array.isArray(data.data)) {
+          setMobiliario(data.data);
+        } else {
+          console.error("Error al obtener mobiliario: No se encontraron datos");
+        }
+      })
+      .catch((error) => {
+        console.error("Error en la solicitud:", error);
+      });
+  };
+
+  const handleEdit = (id) => {
+    const itemToEdit = mobiliario.find((item) => item.id === id);
+    if (itemToEdit) {
+      setEditingItem(itemToEdit); // Establece el mobiliario seleccionado para editar
+    }
+  };
+
+  const handleDelete = (id) => {
+    const itemToDelete = mobiliario.find((item) => item.id === id);
+    if (itemToDelete) {
+      setDeletingItem(itemToDelete); // Establece el mobiliario seleccionado para eliminar
+    }
+  };
+
+  const handleCloseModal = () => {
+    setEditingItem(null); // Cierra el modal de editar
+    setDeletingItem(null); // Cierra el modal de eliminar
+  };
+
+  const handleSave = (updatedItem) => {
+    setMobiliario(
+      mobiliario.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+    ); // Actualiza el mobiliario en la lista
+    setEditingItem(null); // Cierra el modal después de guardar los cambios
+  };
+
+  const [newItem, setNewItem] = useState({
+    nombre: "",
+    descripcion: "",
+    tipo: "",
+    estado: "",
+    Fecha: "",
+    activo: "",
+    codigo: "",
+    ubicacion: "",
+  });
+  
+  
+  const handleDeleteConfirm = (id) => {
+    fetch(`http://localhost/Inventario_Profe_Paulo/Api/Mobiliario/${id}`, {
+      method: "DELETE", // Método DELETE para eliminar el registro
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          Swal.fire("¡Eliminado!", "El mobiliario ha sido eliminado.", "success");
+          setMobiliario(mobiliario.filter((item) => item.id !== id)); // Elimina el item de la lista local
+        } else {
+          Swal.fire("Error", "Hubo un problema al eliminar el mobiliario.", "error");
+        }
+        setDeletingItem(null); // Cierra el modal de eliminar
+      })
+      .catch((error) => {
+        console.error("Error al eliminar:", error);
+        Swal.fire("Error", "Hubo un problema al eliminar el mobiliario.", "error");
+        setDeletingItem(null); // Cierra el modal de eliminar
+      });
+  };
+  
+
+  useEffect(() => {
+    getMobiliario(); // Cargar mobiliario al cargar el componente
+  }, []);
+
+  return (
+    <>
+      <Navbar />
+      <Menu nombre="InveCastor" usuario="Castorcito UWU" />
+      <div className="content-wrapper">
+        <Title title="Mobiliario" breadcrums={["Inicio", "Mobiliario"]} />
+        <section className="content">
+          <div className="row">
+            <div className="col-12 col-sm-12 col-md-6 mb-3">
+              <div className="card card-primary">
+                <div className="card-header">
+                  <h5 className="card-title">Agregar mobiliario/artículo</h5>
+                </div>
+                <div className="card-body">
                                     <form onSubmit={handleSubmit}>
                                         <div className="form-group">
                                             <label>Nombre:</label>
@@ -265,22 +291,92 @@ export const Mobiliario = () => {
                                         </button>
                                     </form>
                                 </div>
-                            </div>
-                        </div>
-                        <div className="col-8">
-                            <div className="card">
-                                <div className="card-header">
-                                    <h3 className="card-title">Listado de Mobiliario</h3>
-                                </div>
-                                <div className="card-body">
-                                    <DTable columnas={columnas} data={mobiliario} />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+              </div>
             </div>
-            <Footer />
-        </>
-    );
+
+            <div className="col-12 col-sm-12 col-md-6">
+              <div className="card">
+                <div className="card-header">
+                  <h5 className="card-title">Listado de Mobiliario</h5>
+                </div>
+                <div className="card-body p-2">
+                  {mobiliario.length > 0 ? (
+                    <div className="table-responsive">
+                      <table className="table table-sm table-bordered table-striped">
+                        <thead>
+                          <tr>
+                            <th>Identificador</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Tipo</th>
+                            <th>Estado</th>
+                            <th>Fecha Registro</th>
+                            <th>Activo</th>
+                            <th>Código</th>
+                            <th>Ubicación</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {mobiliario.map((item, index) => (
+                            <tr key={index}>
+                              <td>{item.id}</td>
+                              <td>{item.nombre}</td>
+                              <td>{item.descripcion}</td>
+                              <td>{item.tipo}</td>
+                              <td>{item.estado}</td>
+                              <td>{item.fecha_registro}</td>
+                              <td>{item.activo === "1" ? "Sí" : "No"}</td>
+                              <td>{item.codigo}</td>
+                              <td>{item.ubicacion}</td>
+                              <td>
+                                <button
+                                  className="btn btn-sm btn-primary"
+                                  onClick={() => handleEdit(item.id)} // Al hacer clic, se abre el modal con los datos del item
+                                >
+                                  Editar
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-danger ml-1"
+                                  onClick={() => handleDelete(item.id)} // Al hacer clic, se abre el modal de eliminar
+                                >
+                                  Eliminar
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <p>No hay datos para mostrar</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* Mostrar el ModalEdit cuando se seleccione un item */}
+      {editingItem && (
+        <ModalEdit
+          item={editingItem} // Pasa el mobiliario seleccionado
+          onClose={handleCloseModal} // Función para cerrar el modal
+          onSave={handleSave} // Función para guardar los cambios
+        />
+      )}
+
+      {/* Mostrar el ModalDelete cuando se seleccione un item para eliminar */}
+      {deletingItem && (
+        <ModalDelete
+          item={deletingItem} // Pasa el mobiliario seleccionado para eliminar
+          onClose={handleCloseModal} // Función para cerrar el modal
+          onDelete={handleDeleteConfirm} // Función para confirmar la eliminación
+        />
+      )}
+
+      <Footer />
+    </>
+  );
 };

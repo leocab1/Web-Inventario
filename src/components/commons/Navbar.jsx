@@ -9,9 +9,6 @@ export const Navbar = () => {
                 <li className="nav-item d-none d-sm-inline-block">
                     <Link to="/" className="nav-link">Inicio</Link>
                 </li>
-                <li className="nav-item d-none d-sm-inline-block">
-                    <Link to="/" className="nav-link">Contactos</Link>
-                </li>
             </ul>
 
             <ul className="navbar-nav ml-auto">

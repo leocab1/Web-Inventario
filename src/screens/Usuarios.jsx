@@ -1,89 +1,116 @@
-import { DTable, Footer, Menu, Navbar, Title } from "../components"
-import React, { useState } from 'react';
-import QR from "../components/commons/QR"; 
+import React, { useState, useEffect } from 'react';
+import { Footer, Menu, Navbar, Title } from "../components";
 import EliminarB from "./Deleteb";
 import Editar from "./edit";
-import Enviar from "./Enviar";
-
-const columnas = [
-    {
-        name: 'Identificador',
-        selector: row => row.matricula
-    },
-    {
-        name: 'Nombre',
-        selector: row => row.nombre
-    },
-    {
-        name: 'Apellido Paterno',
-        selector: row => row.paterno
-    },
-    {
-        name: 'Apellido Materno',
-        selector: row => row.materno
-    },
-    {
-        name: 'Telefono',
-        selector: row => row.telefono
-    },
-    {
-        name: 'Correo Electronico',
-        selector: row => row.electronico
-    },
-    {
-        rol: 'rol',
-        selector: row => row.rol
-    },
-    {
-        name: 'Opciones',
-        selector: row => row.action,
-        cell: (props) => (
-            <>
-                <Editar onClick={() => handleEdit(props)}/>
-                <EliminarB onClick={() => handleDelete(props)} />
-            </>
-        ),
-        ignoreRowClick: true,
-        allowOverflow: true,
-        button: true
-    },
-];
-
-const data = [
-    {
-        id: 1,
-        matricula: "ZAQ0001",
-        nombre: "Leonardo",
-        paterno: "Cano",
-        materno: "Garcia",
-        telefono: "1234567890",
-        electronico: "leonardo.cano@gmail.com",
-        action: "Editar",
-    },
-    {
-        id: 2,
-        matricula: "ZAQ0002",
-        nombre: "Carlos",
-        paterno: "Garcia",
-        materno: "Cano",
-        telefono: "2215754515",
-        electronico: "carlos.garcia@gmail.com",
-        action: "Editar",
-    },
-];
-
 
 export const Usuarios = () => {
-    const [showModal, setShowModal] = useState(false);
-    const [qrData, setQrData] = useState('Información de prueba para QR');
+    const [formData, setFormData] = useState({
+        matricula: "",
+        nombre: "",
+        paterno: "",
+        materno: "",
+        telefono: "",
+        electronico: "",
+        rol: "",
+        areas: "",
+    });
 
-    const handleOpenModal = () => {
-        setShowModal(true);
+    const [data, setData] = useState([]);
+
+   
+    const fetchData = async () => {
+        try {
+            const response = await fetch("http://localhost/Inventario_Profe_Paulo/Api/usuarios");
+            const result = await response.json();
+            
+            // Acceder a la propiedad 'data' en la respuesta de la API
+            if (Array.isArray(result.data)) {
+                setData(result.data); // Usamos 'data' como el array que contiene los usuarios
+            } else {
+                console.error("La API no devolvió un array en 'data':", result);
+                setData([]); // Asegura que 'data' sea un array vacío en caso de error
+            }
+        } catch (error) {
+            console.error("Error al cargar los usuarios:", error);
+            setData([]); // Asegura que 'data' sea un array vacío en caso de error
+        }
+    };
+    
+
+    // Llamar a la función fetchData cuando el componente se monta
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
     };
 
-    const handleCloseModal = () => {
-        setShowModal(false);
+    const handleSubmit = async (e) => {
+        e.preventDefault(); // Previene el comportamiento predeterminado del formulario
+        try {
+            const response = await fetch("http://localhost/Inventario_Profe_Paulo/Api/usuarios", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert("Usuario agregado correctamente");
+                fetchData(); // Vuelve a cargar los usuarios después de agregar uno
+                setFormData({ 
+                    matricula: "",
+                    nombre: "",
+                    paterno: "",
+                    materno: "",
+                    telefono: "",
+                    electronico: "",
+                    rol: "",
+                    areas: "",
+                });
+            } else {
+                alert("Error: " + result.message);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error al intentar agregar el usuario.");
+        }
     };
+
+    const handleEdit = (row) => {
+        // Llena el formulario con los datos existentes
+        setFormData(row);
+    };
+
+    const handleDelete = (row) => {
+        if (window.confirm(`¿Estás seguro de eliminar al usuario ${row.nombre}?`)) {
+            eliminarUsuario(row.id);
+        }
+    };
+
+    const eliminarUsuario = async (id) => {
+        try {
+            const response = await fetch(`http://localhost/Inventario_Profe_Paulo/Api/usuarios/${id}`, {
+                method: "DELETE",
+            });
+
+            if (response.ok) {
+                alert("Usuario eliminado correctamente");
+                fetchData(); // Recarga los datos después de eliminar
+            } else {
+                alert("Error al eliminar el usuario.");
+            }
+        } catch (error) {
+            console.error("Error al eliminar usuario:", error);
+            alert("Error al intentar eliminar el usuario.");
+        }
+    };
+
     return (
         <>
             <Navbar />
@@ -91,7 +118,6 @@ export const Usuarios = () => {
             <div className="content-wrapper">
                 <Title title="Usuarios" breadcrums={["Personas", "Menú"]} />
                 <section className="content">
-
                     <div className="row">
                         <div className="col-4">
                             <div className="card card-primary">
@@ -99,80 +125,37 @@ export const Usuarios = () => {
                                     <h4 className="card-title">Agregar persona</h4>
                                 </div>
                                 <div className="card-body">
-                                    <form>
+                                    <form onSubmit={handleSubmit}>
+                                        {["matricula", "nombre", "paterno", "materno", "telefono", "electronico", "areas"].map(field => (
+                                            <div key={field} className="form-group">
+                                                <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+                                                <input
+                                                    className="form-control"
+                                                    name={field}
+                                                    value={formData[field]}
+                                                    onChange={handleInputChange}
+                                                    placeholder={`Ingrese ${field}`}
+                                                />
+                                            </div>
+                                        ))}
                                         <div className="form-group">
-                                            <label>Matricula/Identificador/No. de empleado</label>
-                                            <input className="form-control" placeholder="NX02154" />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Nombre(s)</label>
-                                            <input className="form-control" placeholder="Alfredo" />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Apellido Paterno</label>
-                                            <input className="form-control" placeholder="Adame" />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Apellido Materno</label>
-                                            <input className="form-control" placeholder="Buenrostro" />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Teléfono</label>
-                                            <input className="form-control" placeholder="111222333" />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Correo electrónico</label>
-                                            <input className="form-control" placeholder="yomero@correo.net" />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label>Rol:</label>
+                                            <label>Rol</label>
                                             <select
-                                                name="rol"
                                                 className="form-control"
-                                                onChange={handleChange}
-                                                value={newUsuario.rol}
-                                                required
+                                                name="rol"
+                                                value={formData.rol}
+                                                onChange={handleInputChange}
                                             >
-                                                <option value="admin">Administrador</option>
-                                                <option value="empleado">Empleado</option>
-                                                <option value="supervisor">Supervisor</option>
+                                                <option value="">Seleccione un rol</option>
+                                                <option value="Ayudante">Ayudante</option>
+                                                <option value="Encargado">Encargado</option>
+                                                <option value="Supervisor">Supervisor</option>
+                                                <option value="Otro">Otro</option>
                                             </select>
                                         </div>
-                                        
+                                        <button type="submit" className="btn btn-primary">Aceptar</button>
                                     </form>
                                 </div>
-                                <div className="card-footer">
-                                    
-                                <div className="modal-footer justify-content-between">
-    <button className="btn-cancel" onClick={handleCloseModal}>
-        Cancelar
-    </button>
-    <button className="btn-accept"  onClick={handleOpenModal}>
-        Aceptar
-    </button>
-</div>
-                                {showModal && (
-                                    <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-hidden="true" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                                        <div className="modal-dialog modal-sm">
-                                            <div className="modal-content modal-filled bg-success">
-                                                <div className="modal-body p-4">
-                                                    <div className="text-center">
-                                                        <i className="ri-check-line h1"></i>
-                                                        <h4 className="mt-2">Usuario Agregado Correctamente!</h4>
-                                                        <div className="text-center">
-                                                        <QR value={qrData} />
-                                                    </div>
-                                                        <button type="button" className="btn btn-light my-2" onClick={handleCloseModal}>
-                                                            Aceptar
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}                              
-                         </div>
                             </div>
                         </div>
                         <div className="col-8">
@@ -181,15 +164,50 @@ export const Usuarios = () => {
                                     <h4 className="card-title">Personas registradas</h4>
                                 </div>
                                 <div className="card-body">
-                                <DTable cols={ columnas } info={ data } />
+                                    {data.length === 0 ? (
+                                        <p>There are no records to display</p>
+                                    ) : (
+                                        <table className="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Identificador</th>
+                                                    <th>Nombre</th>
+                                                    <th>Apellido Paterno</th>
+                                                    <th>Apellido Materno</th>
+                                                    <th>Teléfono</th>
+                                                    <th>Correo Electrónico</th>
+                                                    <th>Rol</th>
+                                                    <th>Áreas Asignadas</th>
+                                                    <th>Opciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {data.map((row) => (
+                                                    <tr key={row.matricula}>
+                                                        <td>{row.matricula}</td>
+                                                        <td>{row.nombre}</td>
+                                                        <td>{row.paterno}</td>
+                                                        <td>{row.materno}</td>
+                                                        <td>{row.telefono}</td>
+                                                        <td>{row.electronico}</td>
+                                                        <td>{row.rol}</td>
+                                                        <td>{row.areas}</td>
+                                                        <td>
+                                                            <Editar onClick={() => handleEdit(row)} />
+                                                            <EliminarB onClick={() => handleDelete(row)} />
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    )}
                                 </div>
                             </div>
-                        </div> 
+                        </div>
                     </div>
-
                 </section>
             </div>
             <Footer />
         </>
-    )
-}
+    );
+};

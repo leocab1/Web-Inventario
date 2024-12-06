@@ -46,14 +46,7 @@ export const Menu = ({ nombre, usuario }) => {
                                 </p>
                             </Link>
                         </li>
-                        <li className="nav-item">
-                            <Link to="/informes" className="nav-link">
-                                <i className="nav-icon fas fa-chart-pie"></i>
-                                <p>
-                                    Informes
-                                </p>
-                            </Link>
-                        </li>
+                        
                         <li className="nav-item">
                             <Link to="/usuarios" className="nav-link">
                                 <i className="nav-icon fas fa-user-lock"></i>
