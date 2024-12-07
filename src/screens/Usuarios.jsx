@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Footer, Menu, Navbar, Title } from "../components";
 import QR from "../components/commons/QR";
-import Swal from "sweetalert2";  // Importar SweetAlert
+import Swal from "sweetalert2"; 
 
 export const Usuarios = () => {
     const [formData, setFormData] = useState({
@@ -14,12 +14,11 @@ export const Usuarios = () => {
         rol: "",
         areas: "",
     });
-    const [qrData, setQrData] = useState(""); // Estado para almacenar la información del QR
+    const [qrData, setQrData] = useState("");
 
     const [isEditing, setIsEditing] = useState(false);
     const [data, setData] = useState([]);
 
-    // Obtener usuarios desde la API
     const fetchData = async () => {
         try {
             const response = await fetch("http://localhost/Inventario_Profe_Paulo/Api/usuarios");
@@ -49,7 +48,6 @@ export const Usuarios = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Validar campos antes de enviar el formulario
         if (
             !formData.matricula ||
             !formData.nombre ||
@@ -60,7 +58,6 @@ export const Usuarios = () => {
             !formData.rol ||
             !formData.areas
         ) {
-            // Si algún campo está vacío, mostrar una alerta y no enviar el formulario
             Swal.fire({
                 icon: 'error',
                 title: 'Campos incompletos',
@@ -80,18 +77,17 @@ export const Usuarios = () => {
         const success = await sendRequest(method, url, formData);
         
         if (success) {
-            fetchData();  // Vuelve a obtener los datos para actualizar la tabla
-            resetForm();  // Limpiar el formulario
+            fetchData(); 
+            resetForm();  
             if (!isEditing) {
-                // Solo generar QR después de agregar un usuario
                 const qrValue = JSON.stringify({
                     matricula: formData.matricula,
                     nombre: formData.nombre,
                     paterno: formData.paterno,
                     materno: formData.materno
-                }); // Convertir a JSON para asegurar que los datos sean correctos
-                setQrData(qrValue); // Generar el QR con la matrícula y otros datos
-                setQrData(JSON.stringify(persona)); // Generar QR con datos
+                });
+                setQrData(qrValue); 
+                setQrData(JSON.stringify(persona)); 
 
             }
         }
@@ -152,7 +148,7 @@ export const Usuarios = () => {
     };
 
     const handleDelete = (row) => {
-        console.log("ID que se pasa para eliminar:", row.id);  // Añadir este log para ver qué valor tiene 'row.id'
+        console.log("ID que se pasa para eliminar:", row.id);  
         Swal.fire({
             title: `¿Estás seguro de eliminar al usuario ${row.nombre}?`,
             icon: 'warning',
@@ -161,7 +157,7 @@ export const Usuarios = () => {
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.isConfirmed) {
-                eliminarUsuario(row.id);  // Asegúrate de pasar el 'id' y no 'matricula'
+                eliminarUsuario(row.id);  
             }
         });
     };
@@ -225,7 +221,7 @@ const eliminarUsuario = async (id) => {
             areas: "",
         });
         setIsEditing(false);
-        setQrData("");  // Limpiar el QR al resetear el formulario
+        setQrData("");  
     };
 
     return (

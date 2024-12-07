@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import QR from "../components/commons/QR";
 import Swal from 'sweetalert2';
 
-// Función para obtener ubicaciones
 const obtenerUbicaciones = async () => {
     try {
         const response = await fetch('http://localhost/Inventario_Profe_Paulo/Api/ubicacion');
@@ -53,16 +52,16 @@ const eliminarUbicacion = async (id_ubicacion) => {
                     text: 'Hubo un problema al eliminar la ubicación. Por favor, inténtelo de nuevo.',
                     showConfirmButton: true,
                     position: 'center',
-                    background: '#F8D7DA',  // Fondo rojo claro
-                    color: '#721C24',  // Color del texto rojo
+                    background: '#F8D7DA',
+                    color: '#721C24',  
                     showClass: {
-                        popup: 'animate__animated animate__shakeX'  // Animación de sacudida para el error
+                        popup: 'animate__animated animate__shakeX'  
                     },
                     hideClass: {
                         popup: 'animate__animated animate__fadeOut'
                     }
                 });
-                return false;  // Hubo un error al eliminar
+                return false;  
             }
         } else {
             await Swal.fire({
@@ -106,7 +105,6 @@ const eliminarUbicacion = async (id_ubicacion) => {
 
 
 
-// Función para enviar una nueva ubicación
 const enviarUbicacion = async (formData) => {
     try {
         const response = await fetch('http://localhost/Inventario_Profe_Paulo/Api/ubicacion', {
@@ -128,7 +126,6 @@ const enviarUbicacion = async (formData) => {
     }
 };
 
-// Validación del formulario
 const validarFormulario = (formData) => {
     if (!formData.edificio || !formData.departamento || !formData.area) {
         return false;

@@ -48,8 +48,8 @@ export const Personas = () => {
                 position: 'top-end',
                 timer: 2500,
             });
-            getPersonas(); // Recargar la lista
-            setQrData(JSON.stringify(persona)); // Generar QR con datos
+            getPersonas();
+            setQrData(JSON.stringify(persona));
 
         } catch (error) {
             console.error(error);
@@ -121,14 +121,13 @@ export const Personas = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        // Verificar si algún campo está vacío
         if (!formData.nombre || !formData.apaterno || !formData.amaterno || !formData.telefono || !formData.correo) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Campos incompletos',
                 text: 'Por favor, complete todos los campos del formulario.',
             });
-            return; // Detener el envío de datos si hay campos vacíos
+            return; 
         }
     
         if (formData.id_persona) {

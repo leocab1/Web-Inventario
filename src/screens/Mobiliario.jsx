@@ -1,6 +1,7 @@
 import { Footer, Menu, Navbar, Title } from "../components";
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
+import QRCode from "react-qr-code"; 
 
 export const Mobiliario = () => {
   const [mobiliario, setMobiliario] = useState([]);
@@ -16,7 +17,8 @@ export const Mobiliario = () => {
     ubicacion: "",
   });
 
-  // Función para obtener el mobiliario desde la API
+  const [qrData, setQrData] = useState(""); 
+
   const getMobiliario = () => {
     fetch("http://localhost/Inventario_Profe_Paulo/Api/Mobiliario")
       .then((response) => {
@@ -37,7 +39,6 @@ export const Mobiliario = () => {
       });
   };
 
-  // Función para manejar el cambio de campos en el formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewItem({ ...newItem, [name]: value });
@@ -45,9 +46,8 @@ export const Mobiliario = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Verificación de datos
-    if (!newItem.nombre || !newItem.descripcion || !newItem.tipo || !newItem.estado || !newItem.activo || !newItem.codigo || !newItem.ubicacion) {
+
+    if (!newItem.nombre || !newItem.descripcion || !newItem.tipo || !newItem.estado || !newItem.Fecha || !newItem.activo || !newItem.codigo || !newItem.ubicacion) {
       Swal.fire({
         icon: "error",
         title: "Campos incompletos",
@@ -59,8 +59,7 @@ export const Mobiliario = () => {
       });
       return;
     }
-  
-    // Aquí creamos el objeto de datos
+
     const mobiliarioData = {
       nombre: newItem.nombre.trim(),
       descripcion: newItem.descripcion.trim(),
@@ -70,32 +69,33 @@ export const Mobiliario = () => {
       codigo: newItem.codigo.trim(),
       ubicacion: newItem.ubicacion.trim(),
     };
-  
-    // Si es un nuevo mobiliario, incluimos la fecha de registro
+
     if (!newItem.id_mobiliarion) {
-      mobiliarioData.fecha_registro = newItem.Fecha.trim();  // Solo se incluye en un nuevo registro
+      mobiliarioData.fecha_registro = newItem.Fecha.trim();
     }
-  
+
     try {
       let response;
+      let data;
+
       if (newItem.id_mobiliarion) {
-        // Actualizar mobiliario existente sin modificar la fecha
         response = await fetch(`http://localhost/Inventario_Profe_Paulo/Api/Mobiliario/${newItem.id_mobiliarion}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(mobiliarioData),
         });
+        data = await response.json();
       } else {
-        // Agregar nuevo mobiliario con la fecha
         response = await fetch("http://localhost/Inventario_Profe_Paulo/Api/Mobiliario", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(mobiliarioData),
         });
+        data = await response.json();
       }
-  
+
       if (!response.ok) throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
-      const data = await response.json();
+
       Swal.fire({
         icon: "success",
         title: newItem.id_mobiliarion ? "¡Mobiliario actualizado!" : "¡Mobiliario agregado!",
@@ -105,10 +105,13 @@ export const Mobiliario = () => {
         timer: 2500,
         timerProgressBar: true,
       });
-  
-      // Refrescar la lista de mobiliarios
+
       getMobiliario();
-      // Limpiar el formulario solo si estamos agregando (no si estamos actualizando)
+
+      
+      setQrData(`http://localhost/Inventario_Profe_Paulo/Detalles/${data.id_mobiliarion}`);
+
+    
       if (!newItem.id_mobiliarion) {
         setNewItem({
           id_mobiliarion: "",
@@ -127,11 +130,10 @@ export const Mobiliario = () => {
       Swal.fire({ icon: "error", title: "Error", text: error.message });
     }
   };
-  
 
+  
   const handleDelete = async (id_mobiliarion) => {
     try {
-      console.log(`Eliminando mobiliario con ID: ${id_mobiliarion}`); // Verifica el id
       const { isConfirmed } = await Swal.fire({
         title: "Confirmar eliminación",
         text: "¿Estás seguro de eliminar este mobiliario?",
@@ -140,55 +142,34 @@ export const Mobiliario = () => {
         confirmButtonText: "Sí, eliminar",
         cancelButtonText: "Cancelar",
       });
-  
-      if (!isConfirmed) return; // Si no se confirma, no se elimina
-  
+
+      if (!isConfirmed) return;
+
       const response = await fetch(`http://localhost/Inventario_Profe_Paulo/Api/Mobiliario/${id_mobiliarion}`, {
-        method: "DELETE",  // Método DELETE
+        method: "DELETE",
       });
-  
-      console.log(`Respuesta del servidor: ${response.status}`);  // Verifica la respuesta del servidor
-  
-      // Verificar si la respuesta es JSON
-      if (!response.ok) {
-        throw new Error(`HTTP Error ${response.status}: ${response.statusText}`);
-      }
-  
-      // Intentar leer la respuesta como JSON
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        const data = await response.json();  // Leer la respuesta JSON
-        if (response.ok) {
-          Swal.fire({
-            icon: 'success',
-            title: '¡Mobiliario eliminado!',
-            toast: true,
-            position: 'top-end',
-            timer: 2500,
-          });
-          getMobiliario();  // Refrescar la lista de mobiliarios
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: data.message || 'Hubo un error al eliminar el mobiliario',
-          });
-        }
-      } else {
-        const errorText = await response.text();  // Si no es JSON, obtener el texto
-        console.error("Error inesperado:", errorText); // Imprimir el error en la consola
-        throw new Error("Respuesta no es JSON.");
-      }
+
+      if (!response.ok) throw new Error(`HTTP Error ${response.status}: ${response.statusText}`);
+      const data = await response.json();
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Mobiliario eliminado!",
+        toast: true,
+        position: "top-end",
+        timer: 2500,
+        timerProgressBar: true,
+      });
+
+      getMobiliario(); 
     } catch (error) {
-      console.error('Error al eliminar mobiliario:', error);
-      Swal.fire({ icon: 'error', title: 'Error', text: error.message });
+      console.error("Error al eliminar mobiliario:", error);
+      Swal.fire({ icon: "error", title: "Error", text: error.message });
     }
   };
-  
-  
 
   useEffect(() => {
-    getMobiliario(); // Cargar mobiliario al cargar el componente
+    getMobiliario();
   }, []);
 
   return (
@@ -313,6 +294,16 @@ export const Mobiliario = () => {
                     <button type="submit" className="btn btn-primary btn-block">
                       {newItem.id_mobiliarion ? "Actualizar Mobiliario" : "Agregar Mobiliario"}
                     </button>
+                    {qrData && (
+                      <div className="mt-4 text-center">
+                        <div className="d-flex justify-content-center">
+                          <div className="border p-3 rounded shadow-sm">
+                            <QRCode value={qrData} size={200} />
+                          </div>
+                        </div>
+                        <p className="mt-2">Escanea este código QR para más detalles.</p>
+                      </div>
+                    )}
                   </form>
                 </div>
               </div>
@@ -353,23 +344,20 @@ export const Mobiliario = () => {
                               <td>{item.activo === "1" ? "Sí" : "No"}</td>
                               <td>{item.codigo}</td>
                               <td>{item.ubicacion}</td>
-                              <td className="text-center">
-  <div className="d-flex justify-content-center align-items-center gap-2">
-    <button
-      className="btn btn-warning"
-      onClick={() => setNewItem(item)} // Cargar el item seleccionado para editar
-    >
-      Editar
-    </button>
-    <button
-      className="btn btn-danger btn-sm"
-      onClick={() => handleDelete(item.id_mobiliarion)} // Eliminar el mobiliario
-    >
-      Eliminar
-    </button>
-  </div>
-</td>
-
+                              <td>
+                                <button
+                                  className="btn btn-warning"
+                                  onClick={() => setNewItem(item)} 
+                                >
+                                  Editar
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-danger ml-1"
+                                  onClick={() => handleDelete(item.id_mobiliarion)} 
+                                >
+                                  Eliminar
+                                </button>
+                              </td>
                             </tr>
                           ))}
                         </tbody>

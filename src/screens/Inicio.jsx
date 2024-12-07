@@ -17,7 +17,7 @@ export const Inicio = () => {
                                     
                                     <div className="text-center">
                                         <img 
-                                            src="../../../public/dist/img/castor.jpeg" // Reemplaza con la URL de tu imagen
+                                            src="../../../public/dist/img/castor.jpeg" 
                                             alt="Imagen de bienvenida"
                                             className="img-fluid"
                                             style={{ maxWidth: "100%", height: "auto" }}
