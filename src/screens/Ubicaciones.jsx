@@ -314,7 +314,7 @@ export const Ubicaciones = () => {
     return (
         <>
             <Navbar />
-            <Menu nombre="Invecastor" usuario="Castorcito uwu" />
+            <Menu nombre="Invecastor" usuario="Castorcito 1" />
             <div className="content-wrapper">
                 <Title title="Ubicaciones" breadcrums={["Personas", "Menú"]} />
                 <section className="content">
@@ -399,7 +399,7 @@ export const Ubicaciones = () => {
                                                     <td>{ubicacion.area}</td>
                                                     <td>
                                                         <button
-                                                            className="btn btn-warning"
+                                                            className="btn btn-info"
                                                             onClick={() => handleEdit(ubicacion)}
                                                         >
                                                             Editar

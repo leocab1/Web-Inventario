@@ -183,7 +183,7 @@ const eliminarUsuario = async (id) => {
                 position: 'top-end',
                 timer: 2500,
             });
-            fetchData();  // Recargar la lista de usuarios
+            fetchData(); 
         } else {
             const errorResponse = await response.json();
             Swal.fire({
@@ -227,7 +227,7 @@ const eliminarUsuario = async (id) => {
     return (
         <>
             <Navbar />
-            <Menu nombre="InveCastor" usuario="Castorcitos uwu" />
+            <Menu nombre="InveCastor" usuario="Castorcitos 1" />
             <div className="content-wrapper">
                 <Title title="Usuarios" breadcrums={["Personas", "Menú"]} />
                 <section className="content">
@@ -325,7 +325,7 @@ const eliminarUsuario = async (id) => {
                                                         <td className="text-center">
     <div className="d-flex justify-content-center align-items-center gap-2">
         <button
- className="btn btn-warning btn-sm"
+ className="btn btn-info btn-sm"
              onClick={() => handleEdit(row)}
         >
         Editar

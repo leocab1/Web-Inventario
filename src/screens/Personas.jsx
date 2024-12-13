@@ -150,7 +150,7 @@ export const Personas = () => {
     return (
         <>
             <Navbar />
-            <Menu nombre="InveCastor" usuario="Castorcito uwu" />
+            <Menu nombre="InveCastor" usuario="Castor 1" />
             <div className="content-wrapper">
                 <Title title="Personas" breadcrums={["Personas", "Menú"]} />
                 <section className="content">
@@ -256,7 +256,7 @@ export const Personas = () => {
                                                         <td className="text-center">
     <div className="d-flex justify-content-center align-items-center gap-2">
         <button
-            className="btn btn-warning"
+            className="btn btn-info"
             onClick={() => handleEdit(persona)}
         >
             Editar

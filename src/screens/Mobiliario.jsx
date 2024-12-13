@@ -175,7 +175,7 @@ export const Mobiliario = () => {
   return (
     <>
       <Navbar />
-      <Menu nombre="InveCastor" usuario="Castorcito UWU" />
+      <Menu nombre="InveCastor" usuario="Castorcito 1" />
       <div className="content-wrapper">
         <Title title="Mobiliario" breadcrums={["Inicio", "Mobiliario"]} />
         <section className="content">
@@ -344,9 +344,10 @@ export const Mobiliario = () => {
                               <td>{item.activo === "1" ? "Sí" : "No"}</td>
                               <td>{item.codigo}</td>
                               <td>{item.ubicacion}</td>
-                              <td>
+                              <td className="text-center">
+                                <div className="d-flex justify-content-center align-items-center gap-2">
                                 <button
-                                  className="btn btn-warning"
+                                  className="btn btn-info"
                                   onClick={() => setNewItem(item)} 
                                 >
                                   Editar
@@ -357,6 +358,7 @@ export const Mobiliario = () => {
                                 >
                                   Eliminar
                                 </button>
+                                </div>        
                               </td>
                             </tr>
                           ))}
